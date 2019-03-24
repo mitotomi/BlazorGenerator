@@ -1,0 +1,39 @@
+{
+  "person": {
+    "id": {
+      "name": "Id",
+      "hidden": true,
+      "validated": false,
+      "nullable": false,
+      "type": "Int"
+    },
+    "name": {
+      "name": "Name",
+      "hidden": false,
+      "validated": false,
+      "nullable": false,
+      "type": "String"
+    },
+    "lastName": {
+      "name": "LastName",
+      "hidden": false,
+      "validated": false,
+      "nullable": false,
+      "type": "String"
+    },
+    "oib": {
+      "name": "OIB",
+      "hidden": false,
+      "validated": true,
+      "nullable": false,
+      "type": "String"
+    },
+    "birthDate": {
+      "name": "BirthDate",
+      "hidden": false,
+      "validated": false,
+      "nullable": false,
+      "type": "DateTime"
+    }
+  }
+}
