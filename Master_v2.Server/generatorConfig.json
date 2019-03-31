@@ -1,5 +1,5 @@
 {
-  "person": {
+  "Person": {
     "id": {
       "name": "Id",
       "hidden": true,

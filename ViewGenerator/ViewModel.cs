@@ -8,5 +8,10 @@ namespace ViewGenerator
     {
         public string dbTable { get; set; }
         public List<Atribute> atributes { get; set; }
+
+        public ViewModel()
+        {
+            atributes = new List<Atribute>();
+        }
     }
 }
