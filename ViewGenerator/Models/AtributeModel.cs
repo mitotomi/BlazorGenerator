@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ViewGenerator
+namespace ViewGenerator.Models
 {
-    public class Atribute
+    public class AtributeModel
     {
         public string name { get; set; }
         public string type { get; set; }
@@ -12,6 +12,6 @@ namespace ViewGenerator
         public bool validationNeeded { get; set; }
         public bool nullable { get; set; }
 
-        public Atribute() { }
+        public AtributeModel() { }
     }
 }
