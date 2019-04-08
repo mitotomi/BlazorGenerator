@@ -8,7 +8,7 @@ namespace ViewGenerator.Generator
 {
     public static class PageGenerator
     {
-        public static void GenerateReadView(string viewsPath, TableModelCollection model)
+        public static void GenerateReadView(string viewsPath, TableModelCollection model, string projectName)
         {
             foreach (TableModel table in model.tableModels)
             {
@@ -16,20 +16,21 @@ namespace ViewGenerator.Generator
                 {
                     using (StreamWriter w = new StreamWriter(fs, Encoding.UTF8))
                     {
+                        w.WriteLine("@using "+projectName+".Shared.Models");
                         w.WriteLine("@*\n\tput routes for page on top with @page /{wishedRoute}\n*@");
                         w.WriteLine();
                         foreach (var attr in table.atributes)
                         {
-                            w.WriteLine("<p " + (attr.hidden ? "hidden" : "") + "><span> " + attr.name + "</span> @" + table.dbTable + "." + attr.name + "</p>");
+                            w.WriteLine("<p " + (attr.hidden ? "hidden" : "") + "><span> " + attr.name + "</span> @" + table.dbTable.ToLower() + "." + attr.name + "</p>");
                         }
                         w.WriteLine();
-                        w.WriteLine("@functions{\n\n}");
+                        w.WriteLine("@functions{\n\t[Parameter]\n\t"+table.dbTable+" "+table.dbTable.ToLower()+"{get; set;}\n}");
                     }
                 }
             }
         }
 
-        public static void GenerateTableView(string viewsPath, TableModelCollection model)
+        public static void GenerateTableView(string viewsPath, TableModelCollection model, string projectName)
         {
             foreach (TableModel table in model.tableModels)
             {
@@ -37,7 +38,7 @@ namespace ViewGenerator.Generator
                 {
                     using (StreamWriter w = new StreamWriter(fs, Encoding.UTF8))
                     {
-                        w.WriteLine("@using ProjectName.Shared.Models //route to models");
+                        w.WriteLine("@using "+projectName+".Shared.Models //route to models");
                         w.WriteLine("@inject HttpClient Http ");
                         w.WriteLine();
                         w.WriteLine("@if (models==null) { \n\t <p><em>Loading...</em></p> \n}\n else {");
@@ -57,6 +58,7 @@ namespace ViewGenerator.Generator
                         {
                             w.WriteLine("\t\t\t<td> entity." + attr.name + "</td>");
                         }
+                        w.WriteLine("\t\t\t<td><a href='/"+table.dbTable+"/edit/@entity.Id'>Edit</a> |<a href='/"+table.dbTable+"/delete/@entity.Id'>Delete</a></td>");
                         w.WriteLine("\t\t</tr>");
                         w.WriteLine("\t}");
                         w.WriteLine("\t</tbody>");
