@@ -22,4 +22,8 @@
     <ProjectReference Include="..\Master_v2.Shared\Master_v2.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DataAccess\" />
+  </ItemGroup>
+
 </Project>

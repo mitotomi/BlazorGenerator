@@ -1,13 +1,15 @@
-﻿@*
+﻿@using Master_v2.Shared.Models
+@*
 	put routes for page on top with @page /{wishedRoute}
 *@
 
-<p hidden><span> Id</span> @Person.Id</p>
-<p ><span> Name</span> @Person.Name</p>
-<p ><span> LastName</span> @Person.LastName</p>
-<p ><span> OIB</span> @Person.OIB</p>
-<p ><span> BirthDate</span> @Person.BirthDate</p>
+<p hidden><span> Id</span> @person.Id</p>
+<p ><span> Name</span> @person.Name</p>
+<p ><span> LastName</span> @person.LastName</p>
+<p ><span> OIB</span> @person.OIB</p>
+<p ><span> BirthDate</span> @person.BirthDate</p>
 
 @functions{
-
+	[Parameter]
+	Person person{get; set;}
 }

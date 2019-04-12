@@ -10,12 +10,13 @@ namespace ViewGenerator
         {
             string jsonPath = @"C:\Users\Tomislav\Documents\Visual Studio 2017\Projects\Master_v2\Master_v2.Server\generatorConfig.json";
             string destPath = @"C:\Users\Tomislav\Documents\Visual Studio 2017\Projects\Master_v2\ViewGenerator\";
-            string ProjectName = "Master_v2";
+            string projectName = "Master_v2";
 
             var model = SetupReader.ReadData(jsonPath);
-            PageGenerator.GenerateReadView(destPath+"Views", model, ProjectName);
-            PageGenerator.GenerateTableView(destPath+"Views", model, ProjectName);
-            ControllerGenerator.GenerateController(destPath+"Controllers", model, ProjectName);
+            PageGenerator.GenerateReadView(destPath+"Views", model, projectName);
+            PageGenerator.GenerateTableView(destPath+"Views", model, projectName);
+            ControllerGenerator.GenerateController(destPath+"Controllers", model, projectName);
+            DataAccessLayerGenerator.GenerateDataAccessLayer(destPath + "DataAccess", model, projectName);
 
             Console.WriteLine("finished");
             Console.ReadKey();
