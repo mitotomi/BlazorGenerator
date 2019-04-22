@@ -22,7 +22,7 @@
       "type": "String"
     },
     "oib": {
-      "name": "OIB",
+      "name": "Oib",
       "hidden": false,
       "validated": true,
       "nullable": false,

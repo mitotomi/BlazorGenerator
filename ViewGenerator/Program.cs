@@ -15,6 +15,7 @@ namespace ViewGenerator
             var model = SetupReader.ReadData(jsonPath);
             PageGenerator.GenerateReadView(destPath+"Views", model, projectName);
             PageGenerator.GenerateTableView(destPath+"Views", model, projectName);
+            PageGenerator.GenerateCreateUpdate(destPath+"Views", model, projectName);
             ControllerGenerator.GenerateController(destPath+"Controllers", model, projectName);
             DataAccessLayerGenerator.GenerateDataAccessLayer(destPath + "DataAccess", model, projectName);
 
