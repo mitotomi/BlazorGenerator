@@ -38,6 +38,7 @@ namespace ViewGenerator.Generator
                 {
                     using(StreamWriter w=new StreamWriter(fs, Encoding.UTF8))
                     {
+                        w.WriteLine("@page \"/"+table.dbTable.ToLower()+"/{id}\"");
                         w.WriteLine("@model "+projectName+".Shared.Models\n\n");
                         w.WriteLine("@{\n\tvar submitAction=Model.Id==0 ? \"Post\" : \"Update\"\n\t \n}");
                         w.WriteLine("<h1>Edit "+table.dbTable+"\n\n");
@@ -61,7 +62,8 @@ namespace ViewGenerator.Generator
                 {
                     using (StreamWriter w = new StreamWriter(fs, Encoding.UTF8))
                     {
-                        w.WriteLine("//@model/using "+projectName+".Shared.Models //route to models");
+                        w.WriteLine("page \"/"+table.dbTable.ToLower()+"\"");
+                        w.WriteLine("@using "+projectName+".Shared.Models");
                         w.WriteLine("@inject HttpClient Http ");
                         w.WriteLine();
                         w.WriteLine("@if (models==null) { \n\t <p><em>Loading...</em></p> \n}\n else {");
