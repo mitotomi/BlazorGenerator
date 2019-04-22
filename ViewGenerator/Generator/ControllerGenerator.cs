@@ -28,18 +28,19 @@ namespace ViewGenerator.Generator
                         w.WriteLine("\t\t\treturn _repository.GetAll();\n\t\t}\n");
                         //get by id
                         w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + table.dbTable.ToLower() + "/{id}\")]");
-                        w.WriteLine("\t\tpublic IEnumerable<" + table.dbTable + "> GetById(int id){");
-                        w.WriteLine("\t\t\treturn _repository.GetById(id);\n\t\t}\n");
+                        w.WriteLine("\t\tpublic " + table.dbTable + " GetById(int id){");
+                        w.WriteLine("\t\t\tif(id==0){\n\t\t\t\treturn new " + table.dbTable + "();\n\t\t\t}\n\t\t\telse{");
+                        w.WriteLine("\t\t\t\treturn _repository.GetById(id);\n\t\t\t}\n\t\t}\n");
                         //post
-                        w.WriteLine("[HttpPost]\n\t\t[Route(\"api/" + table.dbTable.ToLower() + "/create\")]");
-                        w.WriteLine("\t\tpublic void Post([FromBody] " + table.dbTable.ToLower() + " model){");
+                        w.WriteLine("\t\t[HttpPost]\n\t\t[Route(\"api/" + table.dbTable.ToLower() + "/create\")]");
+                        w.WriteLine("\t\tpublic void Post([FromBody] " + table.dbTable + " model){");
                         w.WriteLine("\t\t\tif (ModelState.IsValid){\n\t\t\t\t_repository.Add(model);");
                         w.WriteLine("\t\t\t}\n\t\t}");
                         //update
-                        w.WriteLine("[HttpPost]\n\t\t[Route(\"api/" + table.dbTable.ToLower() + "/edit\")]");
-                        w.WriteLine("public void Update([FromBody] " + table.dbTable.ToLower() + " model){");
+                        w.WriteLine("\t\t[HttpPost]\n\t\t[Route(\"api/" + table.dbTable.ToLower() + "/edit\")]");
+                        w.WriteLine("\t\tpublic void Update([FromBody] " + table.dbTable + " model){");
                         w.WriteLine("\t\t\tif (ModelState.IsValid) {\n\t\t\t\t_repository.Update(model);");
-                        w.WriteLine("\t\t\t}\n\t\t");
+                        w.WriteLine("\t\t\t}\n\t\t}");
                         //delete
                         w.WriteLine("\t\t[HttpDelete]\n\t\t[Route(\"api/" + table.dbTable.ToLower() + "/delete/{id}\")]");
                         w.WriteLine("\t\tpublic void Delete(int id){");
