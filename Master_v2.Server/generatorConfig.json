@@ -21,6 +21,13 @@
       "nullable": false,
       "type": "text"
     },
+    "address": {
+      "name": "Address",
+      "hidden": false,
+      "validated": false,
+      "nullable": false,
+      "type": "text"
+    },
     "oib": {
       "name": "Oib",
       "hidden": false,
@@ -34,6 +41,13 @@
       "validated": false,
       "nullable": false,
       "type": "datetime"
+    },
+    "gender": {
+      "name": "Gender",
+      "hidden": false,
+      "validated": false,
+      "nullable": false,
+      "type": "text"
     }
   }
 }
