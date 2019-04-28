@@ -1,7 +1,7 @@
 ﻿using System;
+using Master_v2.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Master_v2.Shared.Models;
 
 namespace Master_v2.Server.Models
 {
@@ -31,8 +31,6 @@ namespace Master_v2.Server.Models
         {
             modelBuilder.Entity<Person>(entity =>
             {
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
                 entity.Property(e => e.Address).HasMaxLength(100);
 
                 entity.Property(e => e.BirthDate).HasColumnType("date");
