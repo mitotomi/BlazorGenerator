@@ -49,5 +49,27 @@
       "nullable": false,
       "type": "text"
     }
+  },
+  "Store": {
+    "id": {
+      "name": "Id",
+      "hidden": true,
+      "validated": false,
+      "nullable": false,
+      "type": "number"
+    },
+    "name": {
+      "name": "Name",
+      "hidden": false,
+      "validated": false,
+      "nullable": false,
+      "type": "text"
+    },
+    "address": {
+      "name": "Address",
+      "hidden": false,
+      "nullable": false,
+      "type": "text"
+    }
   }
 }

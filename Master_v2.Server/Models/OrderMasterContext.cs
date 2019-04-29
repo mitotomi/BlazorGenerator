@@ -17,6 +17,7 @@ namespace Master_v2.Server.Models
         }
 
         public virtual DbSet<Person> Person { get; set; }
+        public virtual DbSet<Store> Store { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -52,6 +53,17 @@ namespace Master_v2.Server.Models
                     .IsRequired()
                     .HasColumnName("OIB")
                     .HasMaxLength(11);
+            });
+
+            modelBuilder.Entity<Store>(entity =>
+            {
+                entity.Property(e => e.Address)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
             });
         }
     }
