@@ -16,15 +16,18 @@ namespace ViewGenerator.Generator
                 {
                     using (StreamWriter w = new StreamWriter(fs, Encoding.UTF8))
                     {
-                        w.WriteLine("@using " + projectName + ".Shared.Models");
+
+                        w.WriteLine("@page \"/"+table.dbTable.ToLower()+"s/{id}\"");
                         w.WriteLine("@*\n\tput routes for page on top with @page /{wishedRoute}\n*@");
                         w.WriteLine();
                         foreach (var attr in table.atributes)
                         {
-                            w.WriteLine("<p " + (attr.hidden ? "hidden" : "") + "><span> " + attr.name + "</span> @" + table.dbTable.ToLower() + "." + attr.name + "</p>");
+                            w.WriteLine("<p " + (attr.hidden ? "hidden" : "") + "><span> " + attr.name + "</span> @model." + attr.name + "</p>");
                         }
                         w.WriteLine();
-                        w.WriteLine("@functions{\n\t[Parameter]\n\t" + projectName + ".Shared.Models." + table.dbTable + " " + table.dbTable.ToLower() + "{get; set;}\n}");
+                        w.WriteLine("@functions{\n\t[Parameter]\n\tprivate string Id {get; set;}\n\n\t" + projectName + ".Shared.Models." + table.dbTable + " " +
+                            "model = new " + projectName + ".Shared.Models." + table.dbTable + "();");
+                        w.WriteLine("\tprotected override async Task OnInitAsync(){\n\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + table.dbTable + ">(\"/api/" + table.dbTable.ToLower() + "s/\"+Id);\n\t}");
                     }
                 }
             }
@@ -119,13 +122,13 @@ namespace ViewGenerator.Generator
                         w.WriteLine("\t\t<tr>");
                         foreach (var attr in table.atributes)
                         {
-                            if (table.atributes.IndexOf(attr) == 1)
+                            if (table.atributes.IndexOf(attr) != 1)
                             {
                                 w.WriteLine("\t\t\t<td " + (attr.hidden ? " hidden" : "") + "> @entity." + attr.name + "</td>");
                             }
                             else
                             {
-                                w.WriteLine("\t\t\t<td " + (attr.hidden ? " hidden" : "") + "><a onclick=\"/" + table.dbTable.ToLower() +
+                                w.WriteLine("\t\t\t<td " + (attr.hidden ? " hidden" : "") + "><a href=\"/" + table.dbTable.ToLower() +
                                     "/@entity.Id\">" + " @entity." + attr.name + "</a></td>");
                             }
                         }
@@ -138,11 +141,11 @@ namespace ViewGenerator.Generator
                         w.WriteLine("@functions{\n\n");
                         w.WriteLine("\tList<" + projectName + ".Shared.Models." + table.dbTable + "> models;");
                         w.WriteLine("\tprotected override async Task OnInitAsync()\n\t{ ");
-                        w.WriteLine("\t\tmodels=await Http.GetJsonAsync<List<" + table.dbTable + ">>(\"/api/" + table.dbTable + "s\");");
+                        w.WriteLine("\t\tmodels=await Http.GetJsonAsync<List<" + projectName + ".Shared.Models." + table.dbTable + ">>(\"/api/" + table.dbTable + "s\");");
                         w.WriteLine("\t}");
                         w.WriteLine("\tvoid Create(){\n\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "/0\");\n\t}");
                         w.WriteLine("\tvoid Edit(int id){\n\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "/\"+id);\n\t}");
-                        w.WriteLine("\tvoid Delete(int id){\n\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "/delete\"+id);\n\t}");
+                        w.WriteLine("\tvoid Delete(int id){\n\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "/delete/\"+id);\n\t}");
                         w.WriteLine();
                         w.WriteLine("}");
                     }
