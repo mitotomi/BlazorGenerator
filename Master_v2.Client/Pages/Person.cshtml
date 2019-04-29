@@ -1,0 +1,24 @@
+﻿@page "/persons/{id}"
+@inject HttpClient Http
+@*
+    put routes for page on top with @page /{wishedRoute}
+*@
+
+<p hidden><span> Id</span> @model.Id</p>
+<p><span> Name</span> @model.Name</p>
+<p><span> LastName</span> @model.LastName</p>
+<p><span> Address</span> @model.Address</p>
+<p><span> Oib</span> @model.Oib</p>
+<p><span> BirthDate</span> @model.BirthDate</p>
+<p><span> Gender</span> @model.Gender</p>
+
+@functions{
+    [Parameter]
+    private string Id { get; set; }
+
+    Master_v2.Shared.Models.Person model = new Master_v2.Shared.Models.Person();
+    protected override async Task OnInitAsync()
+    {
+        model = await Http.GetJsonAsync<Master_v2.Shared.Models.Person>("/api/person/" + Id);
+    }
+}

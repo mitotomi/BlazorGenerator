@@ -18,6 +18,7 @@ namespace ViewGenerator.Generator
                     {
 
                         w.WriteLine("@page \"/"+table.dbTable.ToLower()+"s/{id}\"");
+                        w.WriteLine("@inject HttpClient Http\n@inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper");
                         w.WriteLine("@*\n\tput routes for page on top with @page /{wishedRoute}\n*@");
                         w.WriteLine();
                         foreach (var attr in table.atributes)
@@ -27,7 +28,8 @@ namespace ViewGenerator.Generator
                         w.WriteLine();
                         w.WriteLine("@functions{\n\t[Parameter]\n\tprivate string Id {get; set;}\n\n\t" + projectName + ".Shared.Models." + table.dbTable + " " +
                             "model = new " + projectName + ".Shared.Models." + table.dbTable + "();");
-                        w.WriteLine("\tprotected override async Task OnInitAsync(){\n\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + table.dbTable + ">(\"/api/" + table.dbTable.ToLower() + "s/\"+Id);\n\t}");
+                        w.WriteLine("\tprotected override async Task OnInitAsync(){\n\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + table.dbTable + ">(\"/api/" + table.dbTable.ToLower() + "/\"+Id);\n\t}");
+                        w.WriteLine("}");
                     }
                 }
             }
@@ -50,7 +52,7 @@ namespace ViewGenerator.Generator
                         w.WriteLine("\t[Parameter]\n\tprivate string Id {get; set;}");
                         w.WriteLine("\tpublic async Task Yes(){\n\t\tawait Http.DeleteAsync(\"/api/" + table.dbTable.ToLower() + "/delete/\"+Id);" +
                             "\n\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "s\");\n\t}");
-                        w.WriteLine("\tpublic async Task No(){\n\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "s\");\n\t}");
+                        w.WriteLine("\tpublic void No(){\n\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "s\");\n\t}");
                         w.WriteLine("}");
                     }
                 }
@@ -79,11 +81,11 @@ namespace ViewGenerator.Generator
                             w.WriteLine("\t\t\t\t<input type=\"" + attr.type + "\" bind=\"@model." + attr.name + "\" asp-for=\"" + attr.name + "\" " + (attr.hidden ? "hidden" : "") + "/>");
                             w.WriteLine("\t\t\t</td>\n\t\t</tr>");
                         }
-                        w.WriteLine("\t<button type=\"submit\" class=\"btn btn - success\">Save</button>");
-                        w.WriteLine("\t</tbody>\n</table>\n</form>\n\n@functions{");
+                        w.WriteLine("\t</tbody>\n</table>");
+                        w.WriteLine("\t<button type=\"submit\" class=\"btn btn - success\">Save</button></form>\n\n@functions{");
                         w.WriteLine("\t[Parameter]\n\tprivate string Id {get; set;}\n\n\t" + projectName + ".Shared.Models." + table.dbTable + " " +
                             "model = new " + projectName + ".Shared.Models." + table.dbTable + "();");
-                        w.WriteLine("\tprotected override async Task OnInitAsync(){\n\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + table.dbTable + ">(\"/api/" + table.dbTable.ToLower() + "s/\"+Id);\n\t}");
+                        w.WriteLine("\tprotected override async Task OnInitAsync(){\n\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + table.dbTable + ">(\"/api/" + table.dbTable.ToLower() + "/\"+Id);\n\t}");
                         w.WriteLine("\tpublic async Task Post(){\n\t\ttry{\n\t\t\tif(model.Id==0){\n\t\t\t\tawait Http.SendJsonAsync(HttpMethod.Post, \"/api/" + table.dbTable.ToLower() + "/create\",model);" +
                             "\n\t\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "s\");");
                         w.WriteLine("\t\t\t}\n\t\t\telse{\n\t\t\t\tawait Http.SendJsonAsync(HttpMethod.Post, \"/api/" + table.dbTable.ToLower() + "/edit\",model);" +
