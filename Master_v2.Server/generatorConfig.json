@@ -97,6 +97,15 @@
       "hidden": false,
       "nullable": false,
       "type": "text"
+    },
+    "ownerId": {
+      "name": "OwnerId",
+      "hidden": false,
+      "nullable": false,
+      "type": "number",
+      "foreignKey": true,
+      "fkTable": "Person",
+      "fkValue": "LastName"
     }
   }
 }

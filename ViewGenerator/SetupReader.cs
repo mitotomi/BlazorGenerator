@@ -42,7 +42,7 @@ namespace ViewGenerator
                             child.dbTable = childTable.Key;
                             foreach(var childAttr in JObject.Parse(childTable.Value.ToString()))
                             {
-                                child.atributes.Add(childAttr.Value.ToObject<ChildAtributeModel>());
+                                child.atributes.Add(childAttr.Value.ToObject<AtributeModel>());
                             }
                             tableModel.children.Add(child);
                         }
