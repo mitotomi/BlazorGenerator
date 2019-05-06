@@ -30,7 +30,23 @@ namespace ViewGenerator
                 tableModel.dbTable = table.Key;
                 foreach (var attr in JObject.Parse(table.Value.ToString()))
                 {
-                    tableModel.atributes.Add(attr.Value.ToObject<AtributeModel>());
+                    if (attr.Key != "children")
+                    {
+                        tableModel.atributes.Add(attr.Value.ToObject<AtributeModel>());
+                    }
+                    else if (attr.Key == "children")
+                    {                       
+                        foreach( var childTable in JObject.Parse(attr.Value.ToString()))
+                        {
+                            var child = new ChildModel();
+                            child.dbTable = childTable.Key;
+                            foreach(var childAttr in JObject.Parse(childTable.Value.ToString()))
+                            {
+                                child.atributes.Add(childAttr.Value.ToObject<AtributeModel>());
+                            }
+                            tableModel.children.Add(child);
+                        }
+                    }
                 }
                 tableCollection.tableModels.Add(tableModel);
             }

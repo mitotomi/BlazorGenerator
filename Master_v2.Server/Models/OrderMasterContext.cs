@@ -64,6 +64,11 @@ namespace Master_v2.Server.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(100);
+
+                entity.HasOne(d => d.Owner)
+                    .WithMany(p => p.Store)
+                    .HasForeignKey(d => d.OwnerId)
+                    .HasConstraintName("FK_Store_Person");
             });
         }
     }

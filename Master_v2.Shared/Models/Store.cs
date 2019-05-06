@@ -8,5 +8,8 @@ namespace Master_v2.Shared.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
+        public int OwnerId { get; set; }
+
+        public Person Owner { get; set; }
     }
 }

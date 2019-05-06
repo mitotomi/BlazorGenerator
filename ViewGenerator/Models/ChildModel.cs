@@ -4,15 +4,14 @@ using System.Text;
 
 namespace ViewGenerator.Models
 {
-    public class TableModel
+    public class ChildModel
     {
         public string dbTable { get; set; }
         public List<AtributeModel> atributes { get; set; }
-        public List<ChildModel> children { get; set; }
-        public TableModel()
+
+        public ChildModel()
         {
             atributes = new List<AtributeModel>();
-            children = new List<ChildModel>();
         }
     }
 }
