@@ -54,16 +54,25 @@
         "id": {
           "name": "Id",
           "hidden": true,
-          "validated": false,
           "nullable": false,
-          "type": "number"
+          "type": "number",
+          "foreignKey": false
         },
         "name": {
           "name": "Name",
           "hidden": false,
-          "validated": false,
           "nullable": false,
-          "type": "text"
+          "type": "text",
+          "foreignKey": false
+        },
+        "ownerId": {
+          "name": "OwnerId",
+          "hidden": false,
+          "nullable": false,
+          "type": "number",
+          "foreignKey": true,
+          "fkTable": "Person",
+          "fkValue": "LastName"
         }
       }
     }

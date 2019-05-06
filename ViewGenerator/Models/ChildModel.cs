@@ -7,11 +7,11 @@ namespace ViewGenerator.Models
     public class ChildModel
     {
         public string dbTable { get; set; }
-        public List<AtributeModel> atributes { get; set; }
+        public List<ChildAtributeModel> atributes { get; set; }
 
         public ChildModel()
         {
-            atributes = new List<AtributeModel>();
+            atributes = new List<ChildAtributeModel>();
         }
     }
 }
