@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using ViewGenerator.Models;
 
@@ -21,7 +22,7 @@ namespace ViewGenerator.Generator
                         w.WriteLine();
                         w.WriteLine("namespace " + projectName + ".Server.Controllers \n{");
                         w.WriteLine("\tpublic class " + table.dbTable + "Controller : Controller \n\t{");
-                        w.WriteLine("\t\tRepo _repository=new Repo();");
+                        w.WriteLine("\t\tRepo _repository=new Repo();\n\t\tRepo2 _repo2 = new Repo2();");
                         //get all
                         w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + table.dbTable.ToLower() + "s\")]");
                         w.WriteLine("\t\tpublic IEnumerable<" + table.dbTable + "> Get(){");
@@ -47,6 +48,34 @@ namespace ViewGenerator.Generator
                         w.WriteLine("\t\t\t_repository.Delete(id);");
                         w.WriteLine("\t\t}");
 
+                        if (table.atributes.Where(x => x.foreignKey == true).Count() > 0)
+                        {
+                            Dictionary<string, List<string>> tableValuePairs = new Dictionary<string, List<string>>();
+                            foreach (var attr in table.atributes.Where(x => x.foreignKey == true))
+                            {
+                                if (tableValuePairs.ContainsKey(attr.fkTable))
+                                {
+                                    tableValuePairs[attr.fkTable].Add(attr.fkValue);
+                                }
+                                else
+                                {
+                                    tableValuePairs[attr.fkTable] = new List<string>();
+                                    tableValuePairs[attr.fkTable].Add(attr.fkValue);
+                                }
+                            }
+
+                            foreach (var fkTable in tableValuePairs.Keys)
+                            {
+                                foreach (var value in tableValuePairs[fkTable])
+                                {
+                                    w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + table.dbTable.ToLower() + "s/" + fkTable.ToLower() + value.ToLower() + "\")]");
+                                    w.WriteLine("\t\tpublic List<SelectListItem> Get" + fkTable+value + "SelectList(){");
+                                    w.WriteLine("\t\t\tvar all=_repo2.GetAll();\n\t\t\tList<SelectListItem> options = new List<SelectListItem>();");
+                                    w.WriteLine("\t\t\tforeach(var option in all){\n\t\t\t\toptions.Add(new SelectListItem(option.Id, option." + value + "));\n\t\t\t}");
+                                    w.WriteLine("\t\t\treturn options;\n\t\t}");
+                                }
+                            }
+                        }
                         w.WriteLine("\t}\n}"); //closing for namespace and class
                     }
                 }

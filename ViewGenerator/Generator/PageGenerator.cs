@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using ViewGenerator.Models;
 
@@ -17,7 +18,7 @@ namespace ViewGenerator.Generator
                     using (StreamWriter w = new StreamWriter(fs, Encoding.UTF8))
                     {
 
-                        w.WriteLine("@page \"/"+table.dbTable.ToLower()+"s/{id}\"");
+                        w.WriteLine("@page \"/" + table.dbTable.ToLower() + "s/{id}\"");
                         w.WriteLine("@inject HttpClient Http\n@inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper");
                         w.WriteLine("@*\n\tput routes for page on top with @page /{wishedRoute}\n*@");
                         w.WriteLine();
@@ -70,25 +71,64 @@ namespace ViewGenerator.Generator
                         w.WriteLine("@page \"/" + table.dbTable.ToLower() + "/{id}\"");
                         w.WriteLine("@inject HttpClient Http\n@inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper");
                         w.WriteLine("<h1>Edit " + table.dbTable + "</h1>\n");
+                        if (table.atributes.Where(x => x.foreignKey == true).Count() > 0)
+                        {
+                            w.WriteLine("<h6>@message</h6>");
+                        }
                         w.WriteLine("<form onsubmit=\"@Post\">\n<table>\n\t<tbody>");
                         foreach (var attr in table.atributes)
                         {
-                            w.WriteLine("\t\t<tr>\n\t\t\t<td>");
-                            if (!attr.hidden)
+                            if (!attr.foreignKey)
                             {
-                                w.WriteLine("\t\t\t\t<label>" + attr.name + "</label>");
+                                w.WriteLine("\t\t<tr>\n\t\t\t<td>");
+                                if (!attr.hidden)
+                                {
+                                    w.WriteLine("\t\t\t\t<label>" + attr.name + "</label>");
+                                }
+                                w.WriteLine("\t\t\t\t<input type=\"" + attr.type + "\" bind=\"@model." + attr.name + "\" asp-for=\"" + attr.name + "\" " + (attr.hidden ? "hidden" : "") + "/>");
+                                w.WriteLine("\t\t\t</td>\n\t\t</tr>");
                             }
-                            w.WriteLine("\t\t\t\t<input type=\"" + attr.type + "\" bind=\"@model." + attr.name + "\" asp-for=\"" + attr.name + "\" " + (attr.hidden ? "hidden" : "") + "/>");
-                            w.WriteLine("\t\t\t</td>\n\t\t</tr>");
+                            else
+                            {
+                                w.WriteLine("\t\t<tr>\n\t\t\t<td>");
+                                w.WriteLine("\t\t\t\t<label>" + attr.name + "</label>");
+                                w.WriteLine("\t\t\t\t<select bind=\"@model." + attr.name + "\">\n\t\t\t\t\t<option value=\"\">Choose value</option>");
+                                w.WriteLine("\t\t\t\t\t@foreach(var option in options"+attr.name.ToLower()+"){\n\t\t\t\t\t\t<option value=\"@option.Key\">@option.Value</option>");
+                                w.WriteLine("\t\t\t\t\t}\n\t\t\t\t</select>\n\t\t\t</td>\n\t\t</tr>");
+                            }
                         }
                         w.WriteLine("\t</tbody>\n</table>");
-                        w.WriteLine("\t<button type=\"submit\" class=\"btn btn - success\">Save</button></form>\n\n@functions{");
+                        w.WriteLine("\t<button type=\"submit\" class=\"btn btn - success\">Save</button>\n</form>\n\n@functions{");
                         w.WriteLine("\t[Parameter]\n\tprivate string Id {get; set;}\n\n\t" + projectName + ".Shared.Models." + table.dbTable + " " +
                             "model = new " + projectName + ".Shared.Models." + table.dbTable + "();");
-                        w.WriteLine("\tprotected override async Task OnInitAsync(){\n\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + table.dbTable + ">(\"/api/" + table.dbTable.ToLower() + "/\"+Id);\n\t}");
-                        w.WriteLine("\tpublic async Task Post(){\n\t\ttry{\n\t\t\tif(model.Id==0){\n\t\t\t\tawait Http.SendJsonAsync(HttpMethod.Post, \"/api/" + table.dbTable.ToLower() + "/create\",model);" +
-                            "\n\t\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "s\");");
-                        w.WriteLine("\t\t\t}\n\t\t\telse{\n\t\t\t\tawait Http.SendJsonAsync(HttpMethod.Post, \"/api/" + table.dbTable.ToLower() + "/edit\",model);" +
+                        foreach (var attr in table.atributes.Where(x=>x.foreignKey==true))
+                        {
+                            w.WriteLine("\tList<" + projectName + ".Shared.Models.SelectListItem> options"+attr.name.ToLower()+" = new List<"+projectName+".Shared.Models.SelectListItem>();");
+                        }
+                        w.WriteLine("\tstring message = \"\";");
+                        w.WriteLine("\tprotected override async Task OnInitAsync(){\n\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + table.dbTable + ">(\"/api/" + table.dbTable.ToLower() + "/\"+Id);");
+                        foreach (var attr in table.atributes.Where(x => x.foreignKey == true))
+                        {
+                            w.WriteLine("\t\toptions"+attr.name.ToLower()+" = await Http.GetJsonAsync<List<" + projectName + ".Shared.Models.SelectListItem>>(\"/api/" + table.dbTable.ToLower() + "s/" + attr.fkTable.ToLower() + attr.fkValue.ToLower() + "\");");
+                        }
+                        w.WriteLine("\t}");
+                        if (table.atributes.Any(x => x.foreignKey == true))
+                        {
+                            string condition = "";
+                            foreach(var attr in table.atributes.Where(x => x.foreignKey == true))
+                            {
+                                condition += "model."+attr.name +" == 0 ||";
+                            }
+                            condition = condition.Substring(0,condition.Length-2);
+                            w.WriteLine("\tpublic async Task Post(){\n\t\ttry{\n\t\t\tif("+condition+"){\n\t\t\t\tmessage=\"Please, fill all fields\";\n\t\t\t}");
+                            w.WriteLine("\t\t\telse if(model.Id==0){\n\t\t\t\tawait Http.SendJsonAsync(HttpMethod.Post, \"/api/"+table.dbTable.ToLower()+"/create\", model);"+
+                                "\n\t\t\t\turiHelper.NavigateTo(\"/"+table.dbTable.ToLower()+ "s\");\n\t\t\t}");
+                        }
+                        else {
+                            w.WriteLine("\tpublic async Task Post(){\n\t\ttry{\n\t\t\tif(model.Id==0){\n\t\t\t\tawait Http.SendJsonAsync(HttpMethod.Post, \"/api/" + table.dbTable.ToLower() + "/create\",model);" +
+                                "\n\t\t\t\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "s\");\n\t\t\t}");
+                        }
+                        w.WriteLine("\t\t\telse{\n\t\t\t\tawait Http.SendJsonAsync(HttpMethod.Post, \"/api/" + table.dbTable.ToLower() + "/edit\",model);" +
                             "\n\t\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "s\");\n\t\t\t}");
                         w.WriteLine("\t\t}\n\t\tcatch(Exception e){\n\t\t\tConsole.WriteLine(e.Message);\n\t\t\tthrow;\n\t\t}\n\t}\n}");
                     }
