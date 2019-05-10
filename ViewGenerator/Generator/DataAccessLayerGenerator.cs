@@ -43,7 +43,13 @@ namespace ViewGenerator.Generator
                         w.WriteLine("\t\t\t"+table.dbTable+" entity = _context."+table.dbTable+".Find(id);");
                         w.WriteLine("\t\t\tif (entity != null){\n\t\t\t\t_context."+table.dbTable+".Remove(entity);\n\t\t\t\t_context.SaveChanges();\n\t\t\t}");
                         w.WriteLine("\t\t}");
-
+                        //get data for children
+                        foreach(var child in table.children)
+                        {
+                            w.WriteLine("\t\tpublic List<"+child.dbTable+"> Get"+child.dbTable+"Children(int id){");
+                            w.WriteLine("\t\t\treturn _context."+table.dbTable+".Where(x=>x.Id==id).Include(x=>x."+child.dbTable+")." +
+                                "SelectMany(x=>x."+child.dbTable+").ToList();\n\t\t}");
+                        }
                         w.WriteLine("\t}\n}");
                     }
                 }

@@ -65,14 +65,12 @@
           "type": "text",
           "foreignKey": false
         },
-        "ownerId": {
-          "name": "OwnerId",
+        "address": {
+          "name": "Address",
           "hidden": false,
           "nullable": false,
-          "type": "number",
-          "foreignKey": true,
-          "fkTable": "Person",
-          "fkValue": "LastName"
+          "type": "text",
+          "foreignKey": false
         }
       }
     }

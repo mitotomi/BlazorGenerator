@@ -69,12 +69,18 @@ namespace ViewGenerator.Generator
                                 foreach (var value in tableValuePairs[fkTable])
                                 {
                                     w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + table.dbTable.ToLower() + "s/" + fkTable.ToLower() + value.ToLower() + "\")]");
-                                    w.WriteLine("\t\tpublic List<SelectListItem> Get" + fkTable+value + "SelectList(){");
+                                    w.WriteLine("\t\tpublic List<SelectListItem> Get" + fkTable + value + "SelectList(){");
                                     w.WriteLine("\t\t\tvar all=_repo2.GetAll();\n\t\t\tList<SelectListItem> options = new List<SelectListItem>();");
                                     w.WriteLine("\t\t\tforeach(var option in all){\n\t\t\t\toptions.Add(new SelectListItem(option.Id, option." + value + "));\n\t\t\t}");
                                     w.WriteLine("\t\t\treturn options;\n\t\t}");
                                 }
                             }
+                        }
+                        foreach (var child in table.children)
+                        {
+                            w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + table.dbTable.ToLower() + "/" + child.dbTable.ToLower() + "\")]");
+                            w.WriteLine("\t\tpublic List<" + child.dbTable + "> Get" + child.dbTable + "(int id){");
+                            w.WriteLine("\t\t\treturn _repository.Get" + child.dbTable + "Children(id);\n\t\t}");
                         }
                         w.WriteLine("\t}\n}"); //closing for namespace and class
                     }

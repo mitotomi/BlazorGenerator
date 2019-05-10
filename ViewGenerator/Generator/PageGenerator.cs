@@ -26,10 +26,44 @@ namespace ViewGenerator.Generator
                         {
                             w.WriteLine("<p " + (attr.hidden ? "hidden" : "") + "><span> " + attr.name + "</span> @model." + attr.name + "</p>");
                         }
+                        foreach (var child in table.children)
+                        {
+                            w.WriteLine("\n<h3>" + child.dbTable + "s</h3>\n");
+                            w.WriteLine("<table>\n\t<thead>\n\t\t<tr>");
+                            foreach (var attr in child.atributes)
+                            {
+                                w.WriteLine("\t\t\t<td" + (attr.hidden ? " hidden" : "") + "> " + attr.name + "</td>");
+                            }
+                            w.WriteLine("\t\t</tr>\n\t</thead>");
+                            w.WriteLine("\t<tbody>");
+                            w.WriteLine("\t@foreach(var entity in @model." + child.dbTable + "){");
+                            w.WriteLine("\t\t<tr>");
+                            foreach (var attr in child.atributes)
+                            {
+                                if (table.atributes.IndexOf(attr) != 1)
+                                {
+                                    w.WriteLine("\t\t\t<td " + (attr.hidden ? " hidden" : "") + "> @entity." + attr.name + "</td>");
+                                }
+                                else
+                                {
+                                    w.WriteLine("\t\t\t<td " + (attr.hidden ? " hidden" : "") + "><a href=\"/" + child.dbTable.ToLower() +
+                                        "s/@entity.Id\">" + " @entity." + attr.name + "</a></td>");
+                                }
+                            }
+                            w.WriteLine("\t\t\t<td><button onclick=\"@(e=>Edit(entity.Id, \"" + child.dbTable + "\"))\">Edit</button> |<button onclick=\"@(e=>Delete(entity.Id, \"" + child.dbTable + "\"))\">Delete</button></td>");
+                            w.WriteLine("\t\t</tr>");
+                            w.WriteLine("\t}");
+                            w.WriteLine("\t</tbody>\n</table>");
+                        }
                         w.WriteLine();
                         w.WriteLine("@functions{\n\t[Parameter]\n\tprivate string Id {get; set;}\n\n\t" + projectName + ".Shared.Models." + table.dbTable + " " +
                             "model = new " + projectName + ".Shared.Models." + table.dbTable + "();");
                         w.WriteLine("\tprotected override async Task OnInitAsync(){\n\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + table.dbTable + ">(\"/api/" + table.dbTable.ToLower() + "/\"+Id);\n\t}");
+                        if (table.children.Count > 0)
+                        {
+                            w.WriteLine("\tvoid Edit(int id, string table){\n\t\turiHelper.NavigateTo(\"/\"+table.ToLower()+\"/\"+id);\n\t}");
+                            w.WriteLine("\tvoid Delete(int id, string table){\n\t\turiHelper.NavigateTo(\"/\" + table.ToLower() + \"/delete/\"+id);\n\t}");
+                        }
                         w.WriteLine("}");
                     }
                 }
@@ -93,7 +127,7 @@ namespace ViewGenerator.Generator
                                 w.WriteLine("\t\t<tr>\n\t\t\t<td>");
                                 w.WriteLine("\t\t\t\t<label>" + attr.name + "</label>");
                                 w.WriteLine("\t\t\t\t<select bind=\"@model." + attr.name + "\">\n\t\t\t\t\t<option value=\"\">Choose value</option>");
-                                w.WriteLine("\t\t\t\t\t@foreach(var option in options"+attr.name.ToLower()+"){\n\t\t\t\t\t\t<option value=\"@option.Key\">@option.Value</option>");
+                                w.WriteLine("\t\t\t\t\t@foreach(var option in options" + attr.name.ToLower() + "){\n\t\t\t\t\t\t<option value=\"@option.Key\">@option.Value</option>");
                                 w.WriteLine("\t\t\t\t\t}\n\t\t\t\t</select>\n\t\t\t</td>\n\t\t</tr>");
                             }
                         }
@@ -101,30 +135,31 @@ namespace ViewGenerator.Generator
                         w.WriteLine("\t<button type=\"submit\" class=\"btn btn - success\">Save</button>\n</form>\n\n@functions{");
                         w.WriteLine("\t[Parameter]\n\tprivate string Id {get; set;}\n\n\t" + projectName + ".Shared.Models." + table.dbTable + " " +
                             "model = new " + projectName + ".Shared.Models." + table.dbTable + "();");
-                        foreach (var attr in table.atributes.Where(x=>x.foreignKey==true))
+                        foreach (var attr in table.atributes.Where(x => x.foreignKey == true))
                         {
-                            w.WriteLine("\tList<" + projectName + ".Shared.Models.SelectListItem> options"+attr.name.ToLower()+" = new List<"+projectName+".Shared.Models.SelectListItem>();");
+                            w.WriteLine("\tList<" + projectName + ".Shared.Models.SelectListItem> options" + attr.name.ToLower() + " = new List<" + projectName + ".Shared.Models.SelectListItem>();");
                         }
                         w.WriteLine("\tstring message = \"\";");
                         w.WriteLine("\tprotected override async Task OnInitAsync(){\n\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + table.dbTable + ">(\"/api/" + table.dbTable.ToLower() + "/\"+Id);");
                         foreach (var attr in table.atributes.Where(x => x.foreignKey == true))
                         {
-                            w.WriteLine("\t\toptions"+attr.name.ToLower()+" = await Http.GetJsonAsync<List<" + projectName + ".Shared.Models.SelectListItem>>(\"/api/" + table.dbTable.ToLower() + "s/" + attr.fkTable.ToLower() + attr.fkValue.ToLower() + "\");");
+                            w.WriteLine("\t\toptions" + attr.name.ToLower() + " = await Http.GetJsonAsync<List<" + projectName + ".Shared.Models.SelectListItem>>(\"/api/" + table.dbTable.ToLower() + "s/" + attr.fkTable.ToLower() + attr.fkValue.ToLower() + "\");");
                         }
                         w.WriteLine("\t}");
                         if (table.atributes.Any(x => x.foreignKey == true))
                         {
                             string condition = "";
-                            foreach(var attr in table.atributes.Where(x => x.foreignKey == true))
+                            foreach (var attr in table.atributes.Where(x => x.foreignKey == true))
                             {
-                                condition += "model."+attr.name +" == 0 ||";
+                                condition += "model." + attr.name + " == 0 ||";
                             }
-                            condition = condition.Substring(0,condition.Length-2);
-                            w.WriteLine("\tpublic async Task Post(){\n\t\ttry{\n\t\t\tif("+condition+"){\n\t\t\t\tmessage=\"Please, fill all fields\";\n\t\t\t}");
-                            w.WriteLine("\t\t\telse if(model.Id==0){\n\t\t\t\tawait Http.SendJsonAsync(HttpMethod.Post, \"/api/"+table.dbTable.ToLower()+"/create\", model);"+
-                                "\n\t\t\t\turiHelper.NavigateTo(\"/"+table.dbTable.ToLower()+ "s\");\n\t\t\t}");
+                            condition = condition.Substring(0, condition.Length - 2);
+                            w.WriteLine("\tpublic async Task Post(){\n\t\ttry{\n\t\t\tif(" + condition + "){\n\t\t\t\tmessage=\"Please, fill all fields\";\n\t\t\t}");
+                            w.WriteLine("\t\t\telse if(model.Id==0){\n\t\t\t\tawait Http.SendJsonAsync(HttpMethod.Post, \"/api/" + table.dbTable.ToLower() + "/create\", model);" +
+                                "\n\t\t\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "s\");\n\t\t\t}");
                         }
-                        else {
+                        else
+                        {
                             w.WriteLine("\tpublic async Task Post(){\n\t\ttry{\n\t\t\tif(model.Id==0){\n\t\t\t\tawait Http.SendJsonAsync(HttpMethod.Post, \"/api/" + table.dbTable.ToLower() + "/create\",model);" +
                                 "\n\t\t\t\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "s\");\n\t\t\t}");
                         }
@@ -171,7 +206,7 @@ namespace ViewGenerator.Generator
                             else
                             {
                                 w.WriteLine("\t\t\t<td " + (attr.hidden ? " hidden" : "") + "><a href=\"/" + table.dbTable.ToLower() +
-                                    "/@entity.Id\">" + " @entity." + attr.name + "</a></td>");
+                                    "s/@entity.Id\">" + " @entity." + attr.name + "</a></td>");
                             }
                         }
                         w.WriteLine("\t\t\t<td><button onclick=\"@(e=>Edit(entity.Id))\">Edit</button> |<button onclick=\"@(e=>Delete(entity.Id))\">Delete</button></td>");
