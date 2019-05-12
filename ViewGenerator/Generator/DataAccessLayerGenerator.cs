@@ -17,6 +17,7 @@ namespace ViewGenerator.Generator
                     using (StreamWriter w = new StreamWriter(fs, Encoding.UTF8))
                     {
                         w.WriteLine("using System;\nusing "+project+".Server.Models;\n"+"using "+project+".Shared.Models;\nusing System.Collections.Generic;\n");
+                        w.WriteLine("using System.Linq;\nusing Microsoft.EntityFrameworkCore;");
                         w.WriteLine("namespace " + project + ".Server.DataAccess\n{");
                         w.WriteLine("\tpublic class " + table.dbTable + "AccessLayer\n{\n");
                         w.WriteLine("\t\tContext _context = new Context();\n");
