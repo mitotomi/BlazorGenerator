@@ -124,7 +124,9 @@ namespace ViewGenerator.Generator
                                 {
                                     w.WriteLine("\t\t\t\t<label>" + attr.name + "</label>");
                                 }
-                                w.WriteLine("\t\t\t\t<input type=\"" + attr.type + "\" bind=\"@model." + attr.name + "\" asp-for=\"" + attr.name + "\" " + (attr.hidden ? "hidden" : "") + "/>");
+                                w.WriteLine("\t\t\t\t<input type=\"" + attr.type + "\" bind=\"@model." + attr.name + "\""+
+                                    (attr.type=="date" ? " format-value=\"yyyy-MM-dd\"" : "")+" asp-for=\"" + attr.name + "\" " + 
+                                    (attr.hidden ? "hidden" : "") + "/>");
                                 w.WriteLine("\t\t\t</td>\n\t\t</tr>");
                             }
                             else

@@ -1,0 +1,91 @@
+﻿@page "/person/{id}"
+@inject HttpClient Http
+@inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper
+<h1>Edit Person</h1>
+
+<form onsubmit="@Post">
+    <table>
+        <tbody>
+            <tr>
+                <td>
+                    <input type="number" bind="@model.Id" asp-for="Id" hidden />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Name</label>
+                    <input type="text" bind="@model.Name" asp-for="Name" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>LastName</label>
+                    <input type="text" bind="@model.LastName" asp-for="LastName" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Address</label>
+                    <input type="text" bind="@model.Address" asp-for="Address" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Oib</label>
+                    <input type="text" bind="@model.Oib" asp-for="Oib" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>BirthDate</label>
+                    <input type="date" bind="@model.BirthDate" format-value="yyyy-MM-dd" asp-for="BirthDate" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Gender</label>
+                    <input type="text" bind="@model.Gender" asp-for="Gender" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>IsActive</label>
+                    <input type="checkbox" bind="@model.IsActive" asp-for="IsActive" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn - success">Save</button>
+</form>
+@functions{
+    [Parameter]
+    private string Id { get; set; }
+
+    Master_v2.Shared.Models.Person model = new Master_v2.Shared.Models.Person();
+    string message = "";
+    protected override async Task OnInitAsync()
+    {
+        model = await Http.GetJsonAsync<Master_v2.Shared.Models.Person>("/api/person/" + Id);
+    }
+    public async Task Post()
+    {
+        try
+        {
+            if (model.Id == 0)
+            {
+                await Http.SendJsonAsync(HttpMethod.Post, "/api/person/create", model);
+                uriHelper.NavigateTo("/persons");
+            }
+            else
+            {
+                await Http.SendJsonAsync(HttpMethod.Post, "/api/person/edit", model);
+                uriHelper.NavigateTo("/persons");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            throw;
+        }
+    }
+}

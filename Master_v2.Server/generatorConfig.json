@@ -40,7 +40,7 @@
       "hidden": false,
       "validated": false,
       "nullable": false,
-      "type": "datetime"
+      "type": "date"
     },
     "gender": {
       "name": "Gender",
@@ -49,32 +49,39 @@
       "nullable": false,
       "type": "text"
     },
-    "children": {
-      "Store": {
-        "id": {
-          "name": "Id",
-          "hidden": true,
-          "nullable": false,
-          "type": "number",
-          "foreignKey": false
-        },
-        "name": {
-          "name": "Name",
-          "hidden": false,
-          "nullable": false,
-          "type": "text",
-          "foreignKey": false
-        },
-        "address": {
-          "name": "Address",
-          "hidden": false,
-          "nullable": false,
-          "type": "text",
-          "foreignKey": false
+    "isActive": {
+      "name": "IsActive",
+      "hidden": false,
+      "validated": false,
+      "nullable": false,
+      "type": "checkbox"
+    },
+      "children": {
+        "Store": {
+          "id": {
+            "name": "Id",
+            "hidden": true,
+            "nullable": false,
+            "type": "number",
+            "foreignKey": false
+          },
+          "name": {
+            "name": "Name",
+            "hidden": false,
+            "nullable": false,
+            "type": "text",
+            "foreignKey": false
+          },
+          "address": {
+            "name": "Address",
+            "hidden": false,
+            "nullable": false,
+            "type": "text",
+            "foreignKey": false
+          }
         }
       }
-    }
-  },
+    },
   "Store": {
     "id": {
       "name": "Id",
