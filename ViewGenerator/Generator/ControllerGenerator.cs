@@ -78,9 +78,9 @@ namespace ViewGenerator.Generator
                         }
                         foreach (var child in table.children)
                         {
-                            w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + table.dbTable.ToLower() + "/" + child.dbTable.ToLower() + "\")]");
+                            w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + table.dbTable.ToLower() + "/" + child.dbTable.ToLower() + "/{id}\")]");
                             w.WriteLine("\t\tpublic List<" + child.dbTable + "> Get" + child.dbTable + "(int id){");
-                            w.WriteLine("\t\t\treturn _repository.Get" + child.dbTable + "Children(id);\n\t\t}");
+                            w.WriteLine("\t\t\treturn _repository.Get" + child.dbTable + "Children(id);\n\t\t}\n");
                         }
                         w.WriteLine("\t}\n}"); //closing for namespace and class
                     }

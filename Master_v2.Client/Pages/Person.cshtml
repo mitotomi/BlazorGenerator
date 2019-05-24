@@ -45,7 +45,7 @@
     protected override async Task OnInitAsync()
     {
         model = await Http.GetJsonAsync<Master_v2.Shared.Models.Person>("/api/person/" + Id);
-        model.Store = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Store>>("/api/person/store" + Id);
+        model.Store = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Store>>("/api/person/store/" + Id);
     }
     void Edit(int id, string table)
     {

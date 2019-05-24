@@ -61,7 +61,7 @@ namespace ViewGenerator.Generator
                         w.WriteLine("\tprotected override async Task OnInitAsync(){\n\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + table.dbTable + ">(\"/api/" + table.dbTable.ToLower() + "/\"+Id);");
                         foreach (var child in table.children)
                         {
-                            w.WriteLine("\t\tmodel."+child.dbTable+" = await Http.GetJsonAsync<List<"+projectName+".Shared.Models."+child.dbTable+">>(\"/api/"+table.dbTable.ToLower()+"/"+child.dbTable.ToLower()+"\"+Id);");
+                            w.WriteLine("\t\tmodel."+child.dbTable+" = await Http.GetJsonAsync<List<"+projectName+".Shared.Models."+child.dbTable+">>(\"/api/"+table.dbTable.ToLower()+"/"+child.dbTable.ToLower()+"/\"+Id);");
                         }
                         w.WriteLine("\t}");
                         if (table.children.Count > 0)

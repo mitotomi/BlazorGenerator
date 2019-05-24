@@ -25,7 +25,7 @@ namespace Master_v2.Server.Controllers
 				return new Person();
 			}
 			else{
-				return _repository.GetById(id);
+                return _repository.GetById(id);
 			}
 		}
 
@@ -49,7 +49,7 @@ namespace Master_v2.Server.Controllers
 			_repository.Delete(id);
 		}
 		[HttpGet]
-		[Route("api/person/store")]
+		[Route("api/person/store/{id}")]
 		public List<Store> GetStore(int id){
 			return _repository.GetStoreChildren(id);
 		}
