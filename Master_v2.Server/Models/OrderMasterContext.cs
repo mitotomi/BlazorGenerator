@@ -16,8 +16,10 @@ namespace Master_v2.Server.Models
         {
         }
 
+        public virtual DbSet<Article> Article { get; set; }
         public virtual DbSet<Person> Person { get; set; }
         public virtual DbSet<Store> Store { get; set; }
+        public virtual DbSet<StoreArticle> StoreArticle { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -30,6 +32,13 @@ namespace Master_v2.Server.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Article>(entity =>
+            {
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+            });
+
             modelBuilder.Entity<Person>(entity =>
             {
                 entity.Property(e => e.Address).HasMaxLength(100);
@@ -69,6 +78,21 @@ namespace Master_v2.Server.Models
                     .WithMany(p => p.Store)
                     .HasForeignKey(d => d.OwnerId)
                     .HasConstraintName("FK_Store_Person");
+            });
+
+            modelBuilder.Entity<StoreArticle>(entity =>
+            {
+                entity.HasOne(d => d.Article)
+                    .WithMany(p => p.StoreArticle)
+                    .HasForeignKey(d => d.ArticleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_StoreArticle_Article");
+
+                entity.HasOne(d => d.Store)
+                    .WithMany(p => p.StoreArticle)
+                    .HasForeignKey(d => d.StoreId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_StoreArticle_Store");
             });
         }
     }
