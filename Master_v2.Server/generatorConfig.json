@@ -134,5 +134,49 @@
         }
       }
     }
+  },
+  "Article": {
+    "id": {
+      "name": "Id",
+      "hidden": false,
+      "nullable": false,
+      "type": "number",
+      "foreignKey": false
+    },
+    "name": {
+      "name": "Name",
+      "hidden": false,
+      "nullable": false,
+      "type": "text",
+      "foreignKey": false
+    },
+    "n-n": {
+      "StoreArticle": {
+        "mainAttribute": "ArticleId",
+        "endAttribute": "StoreId",
+        "Store": {
+          "id": {
+            "name": "Id",
+            "hidden": true,
+            "validated": false,
+            "nullable": false,
+            "type": "number"
+          },
+          "name": {
+            "name": "Name",
+            "hidden": false,
+            "validated": false,
+            "nullable": false,
+            "type": "text"
+          },
+          "address": {
+            "name": "Address",
+            "hidden": false,
+            "nullable": false,
+            "type": "text"
+          }
+        }
+      }
+    }
   }
 }
