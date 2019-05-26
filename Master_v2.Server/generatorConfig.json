@@ -56,32 +56,32 @@
       "nullable": false,
       "type": "checkbox"
     },
-      "children": {
-        "Store": {
-          "id": {
-            "name": "Id",
-            "hidden": true,
-            "nullable": false,
-            "type": "number",
-            "foreignKey": false
-          },
-          "name": {
-            "name": "Name",
-            "hidden": false,
-            "nullable": false,
-            "type": "text",
-            "foreignKey": false
-          },
-          "address": {
-            "name": "Address",
-            "hidden": false,
-            "nullable": false,
-            "type": "text",
-            "foreignKey": false
-          }
+    "children": {
+      "Store": {
+        "id": {
+          "name": "Id",
+          "hidden": true,
+          "nullable": false,
+          "type": "number",
+          "foreignKey": false
+        },
+        "name": {
+          "name": "Name",
+          "hidden": false,
+          "nullable": false,
+          "type": "text",
+          "foreignKey": false
+        },
+        "address": {
+          "name": "Address",
+          "hidden": false,
+          "nullable": false,
+          "type": "text",
+          "foreignKey": false
         }
       }
-    },
+    }
+  },
   "Store": {
     "id": {
       "name": "Id",
@@ -111,6 +111,28 @@
       "foreignKey": true,
       "fkTable": "Person",
       "fkValue": "LastName"
+    },
+    "n-n": {
+      "StoreArticle": {
+        "mainAttribute": "StoreId",
+        "endAttribute": "ArticleId",
+        "Article": {
+          "id": {
+            "name": "Id",
+            "hidden": false,
+            "nullable": false,
+            "type": "number",
+            "foreignKey": false
+          },
+          "name": {
+            "name": "Name",
+            "hidden": false,
+            "nullable": false,
+            "type": "text",
+            "foreignKey": false
+          }
+        }
+      }
     }
   }
 }
