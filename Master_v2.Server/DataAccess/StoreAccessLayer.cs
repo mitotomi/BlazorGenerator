@@ -62,5 +62,5 @@ namespace Master_v2.Server.DataAccess
 				_context.SaveChanges();
 			}
 		}
-	}
+    }
 }

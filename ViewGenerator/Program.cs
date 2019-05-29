@@ -20,7 +20,6 @@ namespace ViewGenerator
             ControllerGenerator.GenerateController(destPath + "Controllers", model, projectName);
             DataAccessLayerGenerator.GenerateDataAccessLayer(destPath + "DataAccess", model, projectName);
 
-
             Console.WriteLine("finished");
             Console.ReadKey();
         }

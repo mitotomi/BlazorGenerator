@@ -4,14 +4,14 @@ using System.Text;
 
 namespace ViewGenerator.Models
 {
-    public class NNRelationModel
+    public class NNModel
     {
         public string nnTable { get; set; }
-        public List<AtributeModel> atributes { get; set; }
+        public NNProps nnProps { get; set; }
 
-        public NNRelationModel()
+        public NNModel()
         {
-            atributes = new List<AtributeModel>();
+            nnProps = new NNProps();
         }
     }
 }

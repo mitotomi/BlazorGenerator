@@ -80,6 +80,24 @@
           "foreignKey": false
         }
       }
+    },
+    "n-n": {
+      "StoreArticle": {
+        "id": {
+          "name": "Id",
+          "hidden": false,
+          "nullable": false,
+          "type": "number",
+          "foreignKey": false
+        },
+        "name": {
+          "name": "Name",
+          "hidden": false,
+          "nullable": false,
+          "type": "text",
+          "foreignKey": false
+        }
+      }
     }
   },
   "Store": {
@@ -111,28 +129,6 @@
       "foreignKey": true,
       "fkTable": "Person",
       "fkValue": "LastName"
-    },
-    "n-n": {
-      "StoreArticle": {
-        "mainAttribute": "StoreId",
-        "endAttribute": "ArticleId",
-        "Article": {
-          "id": {
-            "name": "Id",
-            "hidden": false,
-            "nullable": false,
-            "type": "number",
-            "foreignKey": false
-          },
-          "name": {
-            "name": "Name",
-            "hidden": false,
-            "nullable": false,
-            "type": "text",
-            "foreignKey": false
-          }
-        }
-      }
     }
   },
   "Article": {
@@ -149,34 +145,14 @@
       "nullable": false,
       "type": "text",
       "foreignKey": false
-    },
-    "n-n": {
-      "StoreArticle": {
-        "mainAttribute": "ArticleId",
-        "endAttribute": "StoreId",
-        "Store": {
-          "id": {
-            "name": "Id",
-            "hidden": true,
-            "validated": false,
-            "nullable": false,
-            "type": "number"
-          },
-          "name": {
-            "name": "Name",
-            "hidden": false,
-            "validated": false,
-            "nullable": false,
-            "type": "text"
-          },
-          "address": {
-            "name": "Address",
-            "hidden": false,
-            "nullable": false,
-            "type": "text"
-          }
-        }
-      }
+    }
+  },
+  "n-n": {
+    "StoreArticle": {
+      "table1": "Store",
+      "table2": "Article",
+      "attr2": "ArticleId",
+      "attr1": "StoreId"
     }
   }
 }

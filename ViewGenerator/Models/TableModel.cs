@@ -9,7 +9,7 @@ namespace ViewGenerator.Models
         public string dbTable { get; set; }
         public List<AtributeModel> atributes { get; set; }
         public List<ChildModel> children { get; set; }
-        public List <NNRelationModel> nNRelations { get; set; }
+        public List<NNRelationModel> nNRelations { get; set; }
 
         public TableModel()
         {
