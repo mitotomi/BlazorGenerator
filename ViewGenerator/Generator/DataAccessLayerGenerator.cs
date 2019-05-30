@@ -55,6 +55,49 @@ namespace ViewGenerator.Generator
                     }
                 }
             }
+            foreach (NNModel nnModel in model.nnRelations)
+            {
+                using (FileStream fs = new FileStream(path + "\\" + nnModel.nnTable + "sController.cs", FileMode.Create))
+                {
+                    using (StreamWriter w = new StreamWriter(fs, Encoding.UTF8))
+                    {
+                        w.WriteLine("using System;\nusing " + project + ".Server.Models;\n" + "using " + project + ".Shared.Models;\nusing System.Collections.Generic;\n");
+                        w.WriteLine("using System.Linq;\nusing Microsoft.EntityFrameworkCore;");
+                        w.WriteLine("namespace " + project + ".Server.DataAccess\n{");
+                        w.WriteLine("\tpublic class " + nnModel.nnTable + "AccessLayer\n{\n");
+                        w.WriteLine("\t\tContext _context = new Context();\n");
+                        //get first
+                        w.WriteLine("\t\tpublic IEnumerable<" + nnModel.nnProps.table1 + "> Get"+nnModel.nnProps.table1+"(int id)\n\t\t{");
+                        w.WriteLine("\t\t\ttry{\n\t\t\t\treturn _context."+nnModel.nnTable+".Where(x=>x."+nnModel.nnProps.attr1+" == id)." +
+                            "Include(x=>x."+nnModel.nnProps.table2+ ").Select(x=>x." + nnModel.nnProps.table2 + ").Distinct().ToList();\n\t\t\t}");
+                        w.WriteLine("\t\t\tcatch(Exception e){\n\t\t\t\treturn null;\n\t\t\t}\n\t\t}\n");
+                        //get second
+                        w.WriteLine("\t\tpublic IEnumerable<" + nnModel.nnProps.table2 + "> Get" + nnModel.nnProps.table2 + "(int id)\n\t\t{");
+                        w.WriteLine("\t\t\ttry{\n\t\t\t\treturn _context." + nnModel.nnTable + ".Where(x=>x." + nnModel.nnProps.attr2 + " == id)." +
+                            "Include(x=>x." + nnModel.nnProps.table1 + ").Select(x=>x." + nnModel.nnProps.table1 + ").Distinct().ToList();\n\t\t\t}");
+                        w.WriteLine("\t\t\tcatch(Exception e){\n\t\t\t\treturn null;\n\t\t\t}\n\t\t}\n");
+                        //delete nnTable
+                        w.WriteLine("\t\tpublic void Delete(int id1, int id2){");
+                        w.WriteLine("\t\t\t" + nnModel.nnTable + " entity = _context." + nnModel.nnTable + "" +
+                            ".Where(x=>x."+nnModel.nnProps.attr1+" == id1 && id2 == x."+nnModel.nnProps.attr2+");");
+                        w.WriteLine("\t\t\tif (entity != null){\n\t\t\t\t_context." + nnModel.nnTable + ".Remove(entity);\n\t\t\t\t_context.SaveChanges();\n\t\t\t}");
+                        w.WriteLine("\t\t}");
+                        //post nnTable
+                        w.WriteLine("\t\tpublic void Add(" + nnModel.nnTable + " " + nnModel.nnTable.ToLower() + "){");
+                        w.WriteLine("\t\t\ttry{\n\t\t\t\t_context." + nnModel.nnTable + ".Add(" + nnModel.nnTable.ToLower() + ");");
+                        w.WriteLine("\t\t\t\t_context.SaveChanges();\n\t\t\t}");
+                        w.WriteLine("\t\t\tcatch(Exception e){\n\n\t\t\t}\n\t\t}\n\n");
+                        //update nnTable
+                        w.WriteLine("\t\tpublic void Update(" + nnModel.nnTable + " " + nnModel.nnTable.ToLower() + "){");
+                        w.WriteLine("\t\t\ttry{\n\t\t\t\tif(" + nnModel.nnTable.ToLower() + " != null){\n\t\t\t\t\t" +
+                            "_context." + nnModel.nnTable + ".Update(" + nnModel.nnTable.ToLower() + ");");
+                        w.WriteLine("\t\t\t\t\t_context.SaveChanges();\n\t\t\t\t}\n\t\t\t}");
+                        w.WriteLine("\t\t\tcatch(Exception e){\n\n\t\t\t}\n\t\t}\n\n");
+
+                        w.WriteLine("\t}\n}"); //closing for namespace and class
+                    }
+                }
+            }
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Master_v2.Server.DataAccess
 
         public List<Article> GetArticles(int storeId)
         {
-            var existingArticles = _context.StoreArticle.Where(x => x.StoreId == storeId).Include(x => x.Article).Select(x => x.Article).ToList();
+            var existingArticles = _context.StoreArticle.Where(x => x.StoreId == storeId).Include(x => x.Article).Select(x => x.Article).Distinct().ToList();
             return existingArticles;
         }
 

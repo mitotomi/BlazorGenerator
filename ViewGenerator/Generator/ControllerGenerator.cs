@@ -81,7 +81,52 @@ namespace ViewGenerator.Generator
                             w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + table.dbTable.ToLower() + "/" + child.dbTable.ToLower() + "/{id}\")]");
                             w.WriteLine("\t\tpublic List<" + child.dbTable + "> Get" + child.dbTable + "(int id){");
                             w.WriteLine("\t\t\treturn _repository.Get" + child.dbTable + "Children(id);\n\t\t}\n");
+
+
                         }
+                        w.WriteLine("\t}\n}"); //closing for namespace and class
+                    }
+                }
+            }
+            foreach (NNModel nnModel in model.nnRelations)
+            {
+                using (FileStream fs = new FileStream(path + "\\" + nnModel.nnTable + "sController.cs", FileMode.Create))
+                {
+                    using (StreamWriter w = new StreamWriter(fs, Encoding.UTF8))
+                    {
+                        w.WriteLine("using " + projectName + ".Server.DataAccess;\nusing " + projectName + ".Shared.Models;\nusing Microsoft.AspNetCore.Mvc;\n" +
+                            "using System;\nusing System.Collections.Generic;\nusing System.Linq;\nusing System.Threading.Tasks;");
+                        w.WriteLine();
+                        w.WriteLine("namespace " + projectName + ".Server.Controllers \n{");
+                        w.WriteLine("\tpublic class " + nnModel.nnTable + "Controller : Controller \n\t{");
+                        w.WriteLine("\t\tRepo _repository=new Repo();\n\t\tRepo2 _repo2 = new Repo2();");
+                        // get for first table
+                        w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "/"+nnModel.nnProps.table1.ToLower()+"{id}\")]");
+                        w.WriteLine("\t\tpublic List<" + nnModel.nnProps.table2 + "> GetFor"+nnModel.nnProps.table1+" (int id){");
+                        w.WriteLine("\t\t\treturn _repository.Get"+nnModel.nnProps.table2+"(id);");
+                        w.WriteLine("\t\t}\n");
+                        // get for second table
+                        w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "/" + nnModel.nnProps.table2.ToLower() + "{id}\")]");
+                        w.WriteLine("\t\tpublic List<" + nnModel.nnProps.table1 + "> GetFor" + nnModel.nnProps.table2 + " (int id){");
+                        w.WriteLine("\t\t\treturn _repository.Get" + nnModel.nnProps.table1 + "(id);");
+                        w.WriteLine("\t\t}\n");
+                        // post nn
+                        w.WriteLine("\t\t[HttpPost]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "/create\")]");
+                        w.WriteLine("\t\tpublic void Post([FromBody] " + nnModel.nnTable + " model){");
+                        w.WriteLine("\t\t\tif (ModelState.IsValid){\n\t\t\t\t_repository.Add(model);");
+                        w.WriteLine("\t\t\t}\n\t\t}");
+                        //update nn
+                        w.WriteLine("\t\t[HttpPost]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "/edit\")]");
+                        w.WriteLine("\t\tpublic void Update([FromBody] " + nnModel.nnTable + " model){");
+                        w.WriteLine("\t\t\tif (ModelState.IsValid) {\n\t\t\t\t_repository.Update(model);");
+                        w.WriteLine("\t\t\t}\n\t\t}");
+                        //delete nn
+                        w.WriteLine("\t\t[HttpDelete]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "/delete/{id}\")]");
+                        w.WriteLine("\t\tpublic void Delete(int id){");
+                        w.WriteLine("\t\t\t_repository.Delete(id);");
+                        w.WriteLine("\t\t}");
+
+
                         w.WriteLine("\t}\n}"); //closing for namespace and class
                     }
                 }

@@ -80,24 +80,6 @@
           "foreignKey": false
         }
       }
-    },
-    "n-n": {
-      "StoreArticle": {
-        "id": {
-          "name": "Id",
-          "hidden": false,
-          "nullable": false,
-          "type": "number",
-          "foreignKey": false
-        },
-        "name": {
-          "name": "Name",
-          "hidden": false,
-          "nullable": false,
-          "type": "text",
-          "foreignKey": false
-        }
-      }
     }
   },
   "Store": {
@@ -129,6 +111,24 @@
       "foreignKey": true,
       "fkTable": "Person",
       "fkValue": "LastName"
+    },
+    "n-n": {
+      "StoreArticle": {
+        "id": {
+          "name": "Id",
+          "hidden": false,
+          "nullable": false,
+          "type": "number",
+          "foreignKey": false
+        },
+        "name": {
+          "name": "Name",
+          "hidden": false,
+          "nullable": false,
+          "type": "text",
+          "foreignKey": false
+        }
+      }
     }
   },
   "Article": {
