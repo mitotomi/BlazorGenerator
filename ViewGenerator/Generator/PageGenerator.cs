@@ -55,16 +55,61 @@ namespace ViewGenerator.Generator
                             w.WriteLine("\t}");
                             w.WriteLine("\t</tbody>\n</table>");
                         }
+                        foreach (var nnRelation in table.nNRelations)
+                        {
+                            w.WriteLine("\n<h3>" + nnRelation.nnTable + "s</h3>\n");
+                            w.WriteLine("<table>\n\t<thead>\n\t\t<tr>");
+                            foreach (var attr in nnRelation.atributes)
+                            {
+                                w.WriteLine("\t\t\t<td" + (attr.hidden ? " hidden" : "") + "> " + attr.name + "</td>");
+                            }
+                            w.WriteLine("\t\t</tr>\n\t</thead>");
+                            w.WriteLine("\t<tbody>");
+                            w.WriteLine("\t@foreach(var entity in @model." + nnRelation.nnTable + "){");
+                            w.WriteLine("\t\t<tr>");
+                            foreach (var attr in nnRelation.atributes)
+                            {
+                                if (table.atributes.IndexOf(attr) != 1)
+                                {
+                                    w.WriteLine("\t\t\t<td " + (attr.hidden ? " hidden" : "") + "> @entity." + attr.name + "</td>");
+                                }
+                                else
+                                {
+                                    w.WriteLine("\t\t\t<td " + (attr.hidden ? " hidden" : "") + "><a href=\"/" + nnRelation.nnTable.ToLower() +
+                                        "s/@entity.Id\">" + " @entity." + attr.name + "</a></td>");
+                                }
+                            }
+                            w.WriteLine("\t\t\t<td><button onclick=\"@(e=>Edit(entity.Id, \"" + nnRelation.nnTable + "\"))\">Edit</button> |<button onclick=\"@(e=>Delete(entity.Id, \"" + nnRelation.nnTable + "\"))\">Delete</button></td>");
+                            w.WriteLine("\t\t</tr>");
+                            w.WriteLine("\t}");
+                            w.WriteLine("\t</tbody>\n</table>");
+                        }
                         w.WriteLine();
                         w.WriteLine("@functions{\n\t[Parameter]\n\tprivate string Id {get; set;}\n\n\t" + projectName + ".Shared.Models." + table.dbTable + " " +
                             "model = new " + projectName + ".Shared.Models." + table.dbTable + "();");
+                        foreach (var nnRelation in table.nNRelations)
+                        {
+                            string thisTable = table.dbTable;
+                            string nnRelationTable = nnRelation.nnTable;
+                            var relationModel = model.nnRelations.Where(x => x.nnTable == nnRelationTable).SingleOrDefault();
+                            var otherTable = relationModel.nnProps.table1 == thisTable ? relationModel.nnProps.table2 : relationModel.nnProps.table1;
+                            w.WriteLine("ICollection<"+projectName+".Shared.Models."+otherTable+"> "+otherTable.ToLower()+ "s = new List<" + projectName + ".Shared.Models." + otherTable + ">()");
+                        }
                         w.WriteLine("\tprotected override async Task OnInitAsync(){\n\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + table.dbTable + ">(\"/api/" + table.dbTable.ToLower() + "/\"+Id);");
                         foreach (var child in table.children)
                         {
-                            w.WriteLine("\t\tmodel."+child.dbTable+" = await Http.GetJsonAsync<List<"+projectName+".Shared.Models."+child.dbTable+">>(\"/api/"+table.dbTable.ToLower()+"/"+child.dbTable.ToLower()+"/\"+Id);");
+                            w.WriteLine("\t\tmodel." + child.dbTable + " = await Http.GetJsonAsync<List<" + projectName + ".Shared.Models." + child.dbTable + ">>(\"/api/" + table.dbTable.ToLower() + "/" + child.dbTable.ToLower() + "/\"+Id);");
+                        }
+                        foreach (var nnRelation in table.nNRelations)
+                        {
+                            string thisTable = table.dbTable;
+                            string nnRelationTable = nnRelation.nnTable;
+                            var relationModel = model.nnRelations.Where(x => x.nnTable == nnRelationTable).SingleOrDefault();
+                            var otherTable = relationModel.nnProps.table1 == thisTable ? relationModel.nnProps.table2 : relationModel.nnProps.table1;
+                            w.WriteLine("\t\t"+otherTable.ToLower()+"s = await Http.GetJsonAsync<List<" + projectName + ".Shared.Models." + otherTable+ ">>(\"/api/" +thisTable.ToLower()+"/s/"+otherTable.ToLower()+"s/\"+Id);");
                         }
                         w.WriteLine("\t}");
-                        if (table.children.Count > 0)
+                        if (table.children.Count > 0 || table.nNRelations.Count>0)
                         {
                             w.WriteLine("\tvoid Edit(int id, string table){\n\t\turiHelper.NavigateTo(\"/\"+table.ToLower()+\"/\"+id);\n\t}");
                             w.WriteLine("\tvoid Delete(int id, string table){\n\t\turiHelper.NavigateTo(\"/\" + table.ToLower() + \"/delete/\"+id);\n\t}");
@@ -97,6 +142,27 @@ namespace ViewGenerator.Generator
                     }
                 }
             }
+
+            foreach (NNModel nNModel in model.nnRelations)
+            {
+                using (FileStream fs = new FileStream(viewsPath + "\\" + nNModel.nnTable + "Delete.cshtml", FileMode.Create))
+                {
+                    using (StreamWriter w = new StreamWriter(fs, Encoding.UTF8))
+                    {
+                        w.WriteLine("@page \"/" + nNModel.nnTable.ToLower() + "/delete/{id}\"");
+                        w.WriteLine("@inject HttpClient Http\n@inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper");
+                        w.WriteLine("<h1>Delete " + nNModel.nnTable + "</h1>\n");
+                        w.WriteLine("Are you sure you want to delete this entity");
+                        w.WriteLine("\t\t\t<td><button onclick=\"@Yes\">Yes</button> |<button onclick=\"@No\">No</button></td>");
+                        w.WriteLine("@functions{");
+                        w.WriteLine("\t[Parameter]\n\tprivate string Id {get; set;}");
+                        w.WriteLine("\tpublic async Task Yes(){\n\t\tawait Http.DeleteAsync(\"/api/" + nNModel.nnTable.ToLower() + "/delete/\"+Id);" +
+                            "\n\t\turiHelper.NavigateTo(\"/" + nNModel.nnTable.ToLower() + "s\");\n\t}");
+                        w.WriteLine("\tpublic void No(){\n\t\turiHelper.NavigateTo(\"/" + nNModel.nnTable.ToLower() + "s\");\n\t}");
+                        w.WriteLine("}");
+                    }
+                }
+            }
         }
 
         public static void GenerateCreateUpdate(string viewsPath, TableModelCollection model, string projectName)
@@ -124,8 +190,8 @@ namespace ViewGenerator.Generator
                                 {
                                     w.WriteLine("\t\t\t\t<label>" + attr.name + "</label>");
                                 }
-                                w.WriteLine("\t\t\t\t<input type=\"" + attr.type + "\" bind=\"@model." + attr.name + "\""+
-                                    (attr.type=="date" ? " format-value=\"yyyy-MM-dd\"" : "")+" asp-for=\"" + attr.name + "\" " + 
+                                w.WriteLine("\t\t\t\t<input type=\"" + attr.type + "\" bind=\"@model." + attr.name + "\"" +
+                                    (attr.type == "date" ? " format-value=\"yyyy-MM-dd\"" : "") + " asp-for=\"" + attr.name + "\" " +
                                     (attr.hidden ? "hidden" : "") + "/>");
                                 w.WriteLine("\t\t\t</td>\n\t\t</tr>");
                             }
@@ -173,6 +239,80 @@ namespace ViewGenerator.Generator
                         w.WriteLine("\t\t\telse{\n\t\t\t\tawait Http.SendJsonAsync(HttpMethod.Post, \"/api/" + table.dbTable.ToLower() + "/edit\",model);" +
                             "\n\t\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "s\");\n\t\t\t}");
                         w.WriteLine("\t\t}\n\t\tcatch(Exception e){\n\t\t\tConsole.WriteLine(e.Message);\n\t\t\tthrow;\n\t\t}\n\t}\n}");
+                    }
+                }
+            }
+
+            foreach (NNModel nNModel in model.nnRelations)
+            {
+                using (FileStream fs = new FileStream(viewsPath + "\\" + nNModel.nnTable + "Create.cshtml", FileMode.Create))
+                {
+                    using (StreamWriter w = new StreamWriter(fs, Encoding.UTF8))
+                    {
+                        w.WriteLine("@page \"/" + nNModel.nnTable.ToLower() + "/{id}\"");
+                        w.WriteLine("@inject HttpClient Http\n@inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper");
+                        w.WriteLine("<h1>Edit " + nNModel.nnTable + "</h1>\n");
+                        w.WriteLine("<h6>@message</h6>");
+                        w.WriteLine("<form onsubmit=\"@Post\">\n<table>\n\t<tbody>");
+                        foreach (var attr in nNModel.atributes)
+                        {
+                            if (!attr.foreignKey)
+                            {
+                                w.WriteLine("\t\t<tr>\n\t\t\t<td>");
+                                if (!attr.hidden)
+                                {
+                                    w.WriteLine("\t\t\t\t<label>" + attr.name + "</label>");
+                                }
+                                w.WriteLine("\t\t\t\t<input type=\"" + attr.type + "\" bind=\"@model." + attr.name + "\"" +
+                                    (attr.type == "date" ? " format-value=\"yyyy-MM-dd\"" : "") + " asp-for=\"" + attr.name + "\" " +
+                                    (attr.hidden ? "hidden" : "") + "/>");
+                                w.WriteLine("\t\t\t</td>\n\t\t</tr>");
+                            }
+                            else
+                            {
+                                w.WriteLine("\t\t<tr>\n\t\t\t<td>");
+                                w.WriteLine("\t\t\t\t<label>" + attr.name + "</label>");
+                                w.WriteLine("\t\t\t\t<select bind=\"@model." + attr.name + "\">\n\t\t\t\t\t<option value=\"\">Choose value</option>");
+                                w.WriteLine("\t\t\t\t\t@foreach(var option in options" + attr.name.ToLower() + "){\n\t\t\t\t\t\t<option value=\"@option.Key\">@option.Value</option>");
+                                w.WriteLine("\t\t\t\t\t}\n\t\t\t\t</select>\n\t\t\t</td>\n\t\t</tr>");
+                            }
+                        }
+                        w.WriteLine("\t</tbody>\n</table>");
+                        w.WriteLine("\t<button type=\"submit\" class=\"btn btn - success\">Save</button>\n</form>\n\n@functions{");
+                        w.WriteLine("\t[Parameter]\n\tprivate string Id {get; set;}\n\n\t" + projectName + ".Shared.Models." + nNModel.nnTable + " " +
+                            "model = new " + projectName + ".Shared.Models." + nNModel.nnTable + "();");
+                        foreach (var attr in nNModel.atributes.Where(x => x.foreignKey == true))
+                        {
+                            w.WriteLine("\tList<" + projectName + ".Shared.Models.SelectListItem> options" + attr.name.ToLower() + " = new List<" + projectName + ".Shared.Models.SelectListItem>();");
+                        }
+                        w.WriteLine("\tstring message = \"\";");
+                        w.WriteLine("\tprotected override async Task OnInitAsync(){\n\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + nNModel.nnTable + ">(\"/api/" + nNModel.nnTable.ToLower() + "/\"+Id);");
+                        foreach (var attr in nNModel.atributes.Where(x => x.foreignKey == true))
+                        {
+                            w.WriteLine("\t\toptions" + attr.name.ToLower() + " = await Http.GetJsonAsync<List<" + projectName + ".Shared.Models.SelectListItem>>(\"/api/" + nNModel.nnTable.ToLower() + "s/" + attr.fkTable.ToLower() + attr.fkValue.ToLower() + "\");");
+                        }
+                        w.WriteLine("\t}");
+                        if (nNModel.atributes.Any(x => x.foreignKey == true))
+                        {
+                            string condition = "";
+                            foreach (var attr in nNModel.atributes.Where(x => x.foreignKey == true))
+                            {
+                                condition += "model." + attr.name + " == 0 ||";
+                            }
+                            condition = condition.Substring(0, condition.Length - 2);
+                            w.WriteLine("\tpublic async Task Post(){\n\t\ttry{\n\t\t\tif(" + condition + "){\n\t\t\t\tmessage=\"Please, fill all fields\";\n\t\t\t}");
+                            w.WriteLine("\t\t\telse if(model.Id==0){\n\t\t\t\tawait Http.SendJsonAsync(HttpMethod.Post, \"/api/" + nNModel.nnTable.ToLower() + "/create\", model);" +
+                                "\n\t\t\t\turiHelper.NavigateTo(\"/" + nNModel.nnTable.ToLower() + "s\");\n\t\t\t}");
+                        }
+                        else
+                        {
+                            w.WriteLine("\tpublic async Task Post(){\n\t\ttry{\n\t\t\tif(model.Id==0){\n\t\t\t\tawait Http.SendJsonAsync(HttpMethod.Post, \"/api/" + nNModel.nnTable.ToLower() + "/create\",model);" +
+                                "\n\t\t\t\t\turiHelper.NavigateTo(\"/" + nNModel.nnTable.ToLower() + "s\");\n\t\t\t}");
+                        }
+                        w.WriteLine("\t\t\telse{\n\t\t\t\tawait Http.SendJsonAsync(HttpMethod.Post, \"/api/" + nNModel.nnTable.ToLower() + "/edit\",model);" +
+                            "\n\t\t\turiHelper.NavigateTo(\"/" + nNModel.nnTable.ToLower() + "s\");\n\t\t\t}");
+                        w.WriteLine("\t\t}\n\t\tcatch(Exception e){\n\t\t\tConsole.WriteLine(e.Message);\n\t\t\tthrow;\n\t\t}\n\t}\n}");
+
                     }
                 }
             }

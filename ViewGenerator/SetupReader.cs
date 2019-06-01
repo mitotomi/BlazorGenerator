@@ -32,7 +32,20 @@ namespace ViewGenerator
                     {
                         var nnModel = new NNModel();
                         nnModel.nnTable = obj.Key;
-                        nnModel.nnProps = obj.Value.ToObject<NNProps>();
+                        foreach(var prop in JObject.Parse(table.Value.ToString()))
+                        {
+                            if (prop.Key == "props")
+                            {
+                                nnModel.nnProps = prop.Value.ToObject<NNProps>();
+                            }
+                            else if (prop.Key == "attr")
+                            {
+                                foreach (var att in JObject.Parse(prop.Value.ToString()))
+                                {
+                                    nnModel.atributes.Add(att.Value.ToObject<AtributeModel>());
+                                }
+                            }
+                        }
                         tableCollection.nnRelations.Add(nnModel);
                     }
                 }

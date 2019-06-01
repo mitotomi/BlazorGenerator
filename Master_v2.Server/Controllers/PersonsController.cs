@@ -35,6 +35,9 @@ namespace Master_v2.Server.Controllers
 			if (ModelState.IsValid){
 				_repository.Add(model);
 			}
+            else
+            {
+            }
 		}
 		[HttpPost]
 		[Route("api/person/edit")]

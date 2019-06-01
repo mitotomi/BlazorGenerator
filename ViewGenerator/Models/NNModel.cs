@@ -9,9 +9,12 @@ namespace ViewGenerator.Models
         public string nnTable { get; set; }
         public NNProps nnProps { get; set; }
 
+        public List<AtributeModel> atributes { get; set; }
+
         public NNModel()
         {
             nnProps = new NNProps();
+            atributes = new List<AtributeModel>();
         }
     }
 }
