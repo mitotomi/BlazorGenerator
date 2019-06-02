@@ -3,63 +3,57 @@
 @inject HttpClient Http
 @inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper
 
-@if (models == null)
-{
-    <p><em>Loading...</em></p>
+@if (models==null) { 
+	 <p><em>Loading...</em></p> 
 }
-else
-{
-    <button onclick="@Create">Create</button>
-    <table class="table">
-        <thead>
-            <tr>
-                <td hidden> Id</td>
-                <td> Name</td>
-                <td> LastName</td>
-                <td> Address</td>
-                <td> Oib</td>
-                <td> BirthDate</td>
-                <td> Gender</td>
-                <td> IsActive</td>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var entity in @models)
-            {
-                <tr>
-                    <td hidden> @entity.Id</td>
-                    <td><a href="/persons/@entity.Id"> @entity.Name</a></td>
-                    <td> @entity.LastName</td>
-                    <td> @entity.Address</td>
-                    <td> @entity.Oib</td>
-                    <td> @entity.BirthDate</td>
-                    <td> @entity.Gender</td>
-                    <td> @entity.IsActive</td>
-                    <td><button onclick="@(e=>Edit(entity.Id))">Edit</button> |<button onclick="@(e=>Delete(entity.Id))">Delete</button></td>
-                </tr>
-            }
-        </tbody>
-    </table>
+ else {
+	<button onclick="@Create">Create</button>
+<table class="table">
+	<thead>
+		<tr>
+			<td hidden> Id</td>
+			<td> Name</td>
+			<td> LastName</td>
+			<td> Address</td>
+			<td> Oib</td>
+			<td> BirthDate</td>
+			<td> Gender</td>
+			<td> IsActive</td>
+		</tr>
+	</thead>
+	<tbody>
+	@foreach(var entity in @models){
+		<tr>
+			<td  hidden> @entity.Id</td>
+			<td ><a href="/persons/@entity.Id"> @entity.Name</a></td>
+			<td > @entity.LastName</td>
+			<td > @entity.Address</td>
+			<td > @entity.Oib</td>
+			<td > @entity.BirthDate</td>
+			<td > @entity.Gender</td>
+			<td > @entity.IsActive</td>
+			<td><button onclick="@(e=>Edit(entity.Id))">Edit</button> |<button onclick="@(e=>Delete(entity.Id))">Delete</button></td>
+		</tr>
+	}
+	</tbody>
+</table>
 }
 @functions{
 
 
-    List<Master_v2.Shared.Models.Person> models;
-    protected override async Task OnInitAsync()
-    {
-        models = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Person>>("/api/Persons");
-    }
-    void Create()
-    {
-        uriHelper.NavigateTo("/person/0");
-    }
-    void Edit(int id)
-    {
-        uriHelper.NavigateTo("/person/" + id);
-    }
-    void Delete(int id)
-    {
-        uriHelper.NavigateTo("/person/delete/" + id);
-    }
+	List<Master_v2.Shared.Models.Person> models;
+	protected override async Task OnInitAsync()
+	{ 
+		models=await Http.GetJsonAsync<List<Master_v2.Shared.Models.Person>>("/api/Persons");
+	}
+	void Create(){
+		uriHelper.NavigateTo("/person/0");
+	}
+	void Edit(int id){
+		uriHelper.NavigateTo("/person/"+id);
+	}
+	void Delete(int id){
+		uriHelper.NavigateTo("/person/delete/"+id);
+	}
 
 }

@@ -12,7 +12,7 @@ namespace Master_v2.Server.DataAccess
 
         OrderMasterContext _context = new OrderMasterContext();
 
-		public IEnumerable<Store> GetAll()
+        public IEnumerable<Store> GetAll()
 		{
 			try{
 				return _context.Store;
@@ -62,5 +62,5 @@ namespace Master_v2.Server.DataAccess
 				_context.SaveChanges();
 			}
 		}
-    }
+	}
 }

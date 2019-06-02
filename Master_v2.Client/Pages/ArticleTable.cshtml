@@ -18,7 +18,7 @@
 	<tbody>
 	@foreach(var entity in @models){
 		<tr>
-			<td hidden> @entity.Id</td>
+			<td  hidden> @entity.Id</td>
 			<td ><a href="/articles/@entity.Id"> @entity.Name</a></td>
 			<td><button onclick="@(e=>Edit(entity.Id))">Edit</button> |<button onclick="@(e=>Delete(entity.Id))">Delete</button></td>
 		</tr>

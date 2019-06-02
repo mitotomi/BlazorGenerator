@@ -10,9 +10,9 @@ namespace Master_v2.Server.DataAccess
 	public class PersonAccessLayer
 {
 
-		OrderMasterContext _context = new OrderMasterContext();
+        OrderMasterContext _context = new OrderMasterContext();
 
-		public IEnumerable<Person> GetAll()
+        public IEnumerable<Person> GetAll()
 		{
 			try{
 				return _context.Person;

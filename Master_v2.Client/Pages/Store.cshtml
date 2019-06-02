@@ -10,43 +10,46 @@
 <p ><span> Address</span> @model.Address</p>
 <p ><span> OwnerId</span> @model.OwnerId</p>
 
-<table class="table">
-    <thead>
-        <tr>
-            <td hidden> Id</td>
-            <td> Name</td>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var entity in articles)
-        {
-            <tr>
-                <td hidden> @entity.Id</td>
-                <td><a href="/articles/@entity.Id"> @entity.Name</a></td>
-                <td><button onclick="@(e=>Edit(entity.Id))">Edit</button> |<button onclick="@(e=>Delete(entity.Id))">Delete</button></td>
-            </tr>
-        }
-    </tbody>
+<h3>StoreArticles</h3>
+
+<table>
+	<thead>
+		<tr>
+			<td> Id</td>
+			<td> Name</td>
+		</tr>
+	</thead>
+	<tbody>
+	@foreach(var entity in @model.StoreArticle){
+		<tr>
+			<td > @entity.Id</td>
+			<td > @entity.Name</td>
+			<td><button onclick="@(e=>nnEdit(entity.Id, "StoreArticle", ))">Edit</button> |<button onclick="@(e=>nnDelete(entity.Id, "StoreArticle", ))">Delete</button></td>
+		</tr>
+	}
+	</tbody>
 </table>
 
 @functions{
-    [Parameter]
-    private string Id {get; set;}
+	[Parameter]
+	private string Id {get; set;}
 
-    Master_v2.Shared.Models.Store model = new Master_v2.Shared.Models.Store();
-    ICollection<Master_v2.Shared.Models.Article> articles = new List<Master_v2.Shared.Models.Article>();
-
-    protected override async Task OnInitAsync(){
-        model=await Http.GetJsonAsync<Master_v2.Shared.Models.Store>("/api/store/"+Id);
-        articles = await Http.GetJsonAsync<ICollection<Master_v2.Shared.Models.Article>>("/api/stores/articles/" + Id);
-    }
-
-    void Edit(int id)
-    {
-        uriHelper.NavigateTo("/article/" + id);
-    }
-    void Delete(int id)
-    {
-        uriHelper.NavigateTo("/article/delete/" + id);
-    }
+	Master_v2.Shared.Models.Store model = new Master_v2.Shared.Models.Store();
+ICollection<Master_v2.Shared.Models.Article> articles = new List<Master_v2.Shared.Models.Article>()
+	protected override async Task OnInitAsync(){
+		model=await Http.GetJsonAsync<Master_v2.Shared.Models.Store>("/api/store/"+Id);
+		articles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Article>>("/api/store/s/articles/"+Id);
+	}
+	void Editnn(int id, string table){
+		uriHelper.NavigateTo("/"+table.ToLower()+"/"+id+"/"+Id);
+	}
+	void Deletenn(int id, string table){
+		uriHelper.NavigateTo("/" + table.ToLower() + "/delete/"+id+"/"+Id);
+	}
+	void nnEdit(int id, string table){
+		uriHelper.NavigateTo("/"+table.ToLower()+"/"+Id+"/"+id);
+	}
+	void nnDelete(int id, string table){
+		uriHelper.NavigateTo("/" + table.ToLower() + "/delete/"+Id+"/"+id);
+	}
 }

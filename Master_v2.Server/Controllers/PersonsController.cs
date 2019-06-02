@@ -12,6 +12,7 @@ namespace Master_v2.Server.Controllers
 	{
 		PersonAccessLayer _repository=new PersonAccessLayer();
 		StoreAccessLayer _repo2 = new StoreAccessLayer();
+
 		[HttpGet]
 		[Route("api/persons")]
 		public IEnumerable<Person> Get(){
@@ -25,7 +26,7 @@ namespace Master_v2.Server.Controllers
 				return new Person();
 			}
 			else{
-                return _repository.GetById(id);
+				return _repository.GetById(id);
 			}
 		}
 
@@ -35,9 +36,6 @@ namespace Master_v2.Server.Controllers
 			if (ModelState.IsValid){
 				_repository.Add(model);
 			}
-            else
-            {
-            }
 		}
 		[HttpPost]
 		[Route("api/person/edit")]
@@ -56,5 +54,6 @@ namespace Master_v2.Server.Controllers
 		public List<Store> GetStore(int id){
 			return _repository.GetStoreChildren(id);
 		}
+
 	}
 }

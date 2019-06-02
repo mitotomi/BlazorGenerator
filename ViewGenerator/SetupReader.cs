@@ -32,7 +32,7 @@ namespace ViewGenerator
                     {
                         var nnModel = new NNModel();
                         nnModel.nnTable = obj.Key;
-                        foreach(var prop in JObject.Parse(table.Value.ToString()))
+                        foreach(var prop in JObject.Parse(obj.Value.ToString()))
                         {
                             if (prop.Key == "props")
                             {

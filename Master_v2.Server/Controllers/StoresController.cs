@@ -11,7 +11,8 @@ namespace Master_v2.Server.Controllers
 	public class StoreController : Controller 
 	{
 		StoreAccessLayer _repository=new StoreAccessLayer();
-		PersonAccessLayer _repo2 = new PersonAccessLayer();
+		StoreArticleAccessLayer _repo2 = new StoreArticleAccessLayer ();
+
 		[HttpGet]
 		[Route("api/stores")]
 		public IEnumerable<Store> Get(){
@@ -48,15 +49,15 @@ namespace Master_v2.Server.Controllers
 		public void Delete(int id){
 			_repository.Delete(id);
 		}
-		[HttpGet]
-		[Route("api/stores/personlastname")]
-		public List<SelectListItem> GetPersonLastNameSelectList(){
-			var all=_repo2.GetAll();
-			List<SelectListItem> options = new List<SelectListItem>();
-			foreach(var option in all){
-				options.Add(new SelectListItem(option.Id, option.LastName));
-			}
-			return options;
-		}
+		//[HttpGet]
+		//[Route("api/stores/personlastname")]
+		//public List<SelectListItem> GetPersonLastNameSelectList(){
+		//	var all=_repo2.GetAll();
+		//	List<SelectListItem> options = new List<SelectListItem>();
+		//	foreach(var option in all){
+		//		options.Add(new SelectListItem(option.Id, option.LastName));
+		//	}
+		//	return options;
+		//}
 	}
 }

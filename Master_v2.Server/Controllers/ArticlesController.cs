@@ -11,6 +11,7 @@ namespace Master_v2.Server.Controllers
 	public class ArticleController : Controller 
 	{
 		ArticleAccessLayer _repository=new ArticleAccessLayer();
+		StoreAccessLayer _repo2 = new StoreAccessLayer();
 
 		[HttpGet]
 		[Route("api/articles")]

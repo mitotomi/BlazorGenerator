@@ -81,8 +81,6 @@ namespace ViewGenerator.Generator
                             w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + table.dbTable.ToLower() + "/" + child.dbTable.ToLower() + "/{id}\")]");
                             w.WriteLine("\t\tpublic List<" + child.dbTable + "> Get" + child.dbTable + "(int id){");
                             w.WriteLine("\t\t\treturn _repository.Get" + child.dbTable + "Children(id);\n\t\t}\n");
-
-
                         }
                         w.WriteLine("\t}\n}"); //closing for namespace and class
                     }
@@ -101,12 +99,12 @@ namespace ViewGenerator.Generator
                         w.WriteLine("\tpublic class " + nnModel.nnTable + "Controller : Controller \n\t{");
                         w.WriteLine("\t\tRepo _repository=new Repo();\n\t\tRepo2 _repo2 = new Repo2();");
                         // get for first table
-                        w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "/"+nnModel.nnProps.table1.ToLower()+"{id}\")]");
-                        w.WriteLine("\t\tpublic List<" + nnModel.nnProps.table2 + "> GetFor"+nnModel.nnProps.table1+" (int id){");
-                        w.WriteLine("\t\t\treturn _repository.Get"+nnModel.nnProps.table2+"(id);");
+                        w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "/" + nnModel.nnProps.table1.ToLower() + "/{id}\")]");
+                        w.WriteLine("\t\tpublic List<" + nnModel.nnProps.table2 + "> GetFor" + nnModel.nnProps.table1 + " (int id){");
+                        w.WriteLine("\t\t\treturn _repository.Get" + nnModel.nnProps.table2 + "(id);");
                         w.WriteLine("\t\t}\n");
                         // get for second table
-                        w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "/" + nnModel.nnProps.table2.ToLower() + "{id}\")]");
+                        w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "/" + nnModel.nnProps.table2.ToLower() + "/{id}\")]");
                         w.WriteLine("\t\tpublic List<" + nnModel.nnProps.table1 + "> GetFor" + nnModel.nnProps.table2 + " (int id){");
                         w.WriteLine("\t\t\treturn _repository.Get" + nnModel.nnProps.table1 + "(id);");
                         w.WriteLine("\t\t}\n");
@@ -121,11 +119,39 @@ namespace ViewGenerator.Generator
                         w.WriteLine("\t\t\tif (ModelState.IsValid) {\n\t\t\t\t_repository.Update(model);");
                         w.WriteLine("\t\t\t}\n\t\t}");
                         //delete nn
-                        w.WriteLine("\t\t[HttpDelete]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "/delete/{id}\")]");
-                        w.WriteLine("\t\tpublic void Delete(int id){");
-                        w.WriteLine("\t\t\t_repository.Delete(id);");
+                        w.WriteLine("\t\t[HttpDelete]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "/delete/{id1}/{id2}\")]");
+                        w.WriteLine("\t\tpublic void Delete(int id1, int id2){");
+                        w.WriteLine("\t\t\t_repository.Delete(id1, id2);");
                         w.WriteLine("\t\t}");
 
+                        if (nnModel.atributes.Where(x => x.foreignKey == true).Count() > 0)
+                        {
+                            Dictionary<string, List<string>> tableValuePairs = new Dictionary<string, List<string>>();
+                            foreach (var attr in nnModel.atributes.Where(x => x.foreignKey == true))
+                            {
+                                if (tableValuePairs.ContainsKey(attr.fkTable))
+                                {
+                                    tableValuePairs[attr.fkTable].Add(attr.fkValue);
+                                }
+                                else
+                                {
+                                    tableValuePairs[attr.fkTable] = new List<string>();
+                                    tableValuePairs[attr.fkTable].Add(attr.fkValue);
+                                }
+                            }
+
+                            foreach (var fkTable in tableValuePairs.Keys)
+                            {
+                                foreach (var value in tableValuePairs[fkTable])
+                                {
+                                    w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "s/" + fkTable.ToLower() + value.ToLower() + "\")]");
+                                    w.WriteLine("\t\tpublic List<SelectListItem> Get" + fkTable + value + "SelectList(){");
+                                    w.WriteLine("\t\t\tvar all=_repo2.GetAll();\n\t\t\tList<SelectListItem> options = new List<SelectListItem>();");
+                                    w.WriteLine("\t\t\tforeach(var option in all){\n\t\t\t\toptions.Add(new SelectListItem(option.Id, option." + value + "));\n\t\t\t}");
+                                    w.WriteLine("\t\t\treturn options;\n\t\t}");
+                                }
+                            }
+                        }
 
                         w.WriteLine("\t}\n}"); //closing for namespace and class
                     }
