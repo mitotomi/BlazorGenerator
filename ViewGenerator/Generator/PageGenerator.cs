@@ -64,11 +64,11 @@ namespace ViewGenerator.Generator
                             w.WriteLine("\n<h5>" + nnRelation.nnTable + "s</h5>\n");
                             if (nnDict[nnRelation.nnTable] == table.dbTable)
                             {
-                                w.WriteLine("<button onClick=@( () => Createnn(\"" + nnRelation.nnTable + "\"))></button>");
+                                w.WriteLine("<button onClick=@( () => Createnn(\"" + nnRelation.nnTable + "\"))>Create</button>");
                             }
                             else
                             {
-                                w.WriteLine("<button onClick=@( () => nnCreate(\"" + nnRelation.nnTable + "\"))></button>");
+                                w.WriteLine("<button onClick=@( () => nnCreate(\"" + nnRelation.nnTable + "\"))>Create</button>");
                             }
                             w.WriteLine("<table>\n\t<thead>\n\t\t<tr>");
                             foreach (var attr in nnRelation.atributes)
@@ -77,7 +77,7 @@ namespace ViewGenerator.Generator
                             }
                             w.WriteLine("\t\t</tr>\n\t</thead>");
                             w.WriteLine("\t<tbody>");
-                            w.WriteLine("\t@foreach(var entity in @" + nnRelation.nnTable + "s){");
+                            w.WriteLine("\t@foreach(var entity in " + nnRelation.nnTable.ToLower() + "s){");
                             w.WriteLine("\t\t<tr>");
                             foreach (var attr in nnRelation.atributes)
                             {
@@ -93,14 +93,14 @@ namespace ViewGenerator.Generator
                             }
                             if (nnDict[nnRelation.nnTable]== table.dbTable)
                             {
-                                w.WriteLine("\t\t\t<td><button onclick=\"@(e=>nnEdit(entity.Id, \"" + nnRelation.nnTable + "\", " +
-                                    "))\">Edit</button> |<button onclick=\"@(e=>nnDelete(entity.Id, \"" + nnRelation.nnTable + "\", ))\">Delete</button></td>");
+                                w.WriteLine("\t\t\t<td><button onclick=\"@(e=>nnEdit(entity.Id, \"" + nnRelation.nnTable + "\"" +
+                                    "))\">Edit</button> |<button onclick=\"@(e=>nnDelete(entity.Id, \"" + nnRelation.nnTable + "\"))\">Delete</button></td>");
 
                             }
                             else
                             {
-                                w.WriteLine("\t\t\t<td><button onclick=\"@(e=>Editnn(entity.Id, \"" + nnRelation.nnTable + "\", " +
-                                    "))\">Edit</button> |<button onclick=\"@(e=>Deletenn(entity.Id, \"" + nnRelation.nnTable + "\", ))\">Delete</button></td>");
+                                w.WriteLine("\t\t\t<td><button onclick=\"@(e=>Editnn(entity.Id, \"" + nnRelation.nnTable + "\" " +
+                                    "))\">Edit</button> |<button onclick=\"@(e=>Deletenn(entity.Id, \"" + nnRelation.nnTable + "\" ))\">Delete</button></td>");
                             }
                             w.WriteLine("\t\t</tr>");
                             w.WriteLine("\t}");
@@ -148,8 +148,8 @@ namespace ViewGenerator.Generator
                             w.WriteLine("\tvoid nnEdit(int id, string table){\n\t\turiHelper.NavigateTo(\"/\"+table.ToLower()+\"/\"+Id+\"/\"+id);\n\t}");
                             w.WriteLine("\tvoid nnDelete(int id, string table){\n\t\turiHelper.NavigateTo(\"/\" + table.ToLower() + \"/delete/\"+Id+\"/\"+id);\n\t}");
                             
-                            w.WriteLine("\tvoid Createnn(string nnTable){\n\t\turiHelper.NavigateTo(\"/\"+nnTable+\"/"+table.dbTable.ToLower()+"/\"+Id+\"/0\")");
-                            w.WriteLine("\tvoid nnCreate(string nnTable){\n\t\turiHelper.NavigateTo(\"/\"+nnTable+\"/" + table.dbTable.ToLower() + "/0/\"+Id)");
+                            w.WriteLine("\tvoid Createnn(string nnTable){\n\t\turiHelper.NavigateTo(\"/\"+nnTable+\"/"+table.dbTable.ToLower()+"/\"+Id+\"/0\");\n\t}");
+                            w.WriteLine("\tvoid nnCreate(string nnTable){\n\t\turiHelper.NavigateTo(\"/\"+nnTable+\"/" + table.dbTable.ToLower() + "/0/\"+Id);\n\t}");
 
                         }
                         w.WriteLine("}");

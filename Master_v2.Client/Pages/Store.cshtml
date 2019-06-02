@@ -12,7 +12,7 @@
 
 <h5>StoreArticles</h5>
 
-<button onclick="@( ()=>Create("storearticle"))">Create</button>
+<button onClick=@( () => Createnn("StoreArticle"))>Create</button>
 <table>
     <thead>
         <tr>
@@ -21,7 +21,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var entity in @storearticles)
+        @foreach (var entity in storearticles)
         {
             <tr>
                 <td> @entity.Id</td>
@@ -41,7 +41,7 @@
     protected override async Task OnInitAsync()
     {
         model = await Http.GetJsonAsync<Master_v2.Shared.Models.Store>("/api/store/" + Id);
-        storearticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Article>>("/api/storearticle/article/" + Id);
+        storearticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Article>>("/api/store/article/" + Id);
     }
     void Editnn(int id, string table)
     {
@@ -59,8 +59,12 @@
     {
         uriHelper.NavigateTo("/" + table.ToLower() + "/delete/" + Id + "/" + id);
     }
-    void Create(string nntable)
+    void Createnn(string nnTable)
     {
-        uriHelper.NavigateTo("/"+nntable+"/store/"+Id+"/0");
+        uriHelper.NavigateTo("/" + nnTable + "/store/" + Id + "/0");
+    }
+    void nnCreate(string nnTable)
+    {
+        uriHelper.NavigateTo("/" + nnTable + "/store/0/" + Id);
     }
 }
