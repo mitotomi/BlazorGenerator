@@ -61,7 +61,15 @@ namespace ViewGenerator.Generator
                         {
                             nnDict.Add(nnRelation.nnTable,model.nnRelations.Where(x=>x.nnTable ==nnRelation.nnTable).SingleOrDefault().nnProps.table1);
 
-                            w.WriteLine("\n<h3>" + nnRelation.nnTable + "s</h3>\n");
+                            w.WriteLine("\n<h5>" + nnRelation.nnTable + "s</h5>\n");
+                            if (nnDict[nnRelation.nnTable] == table.dbTable)
+                            {
+                                w.WriteLine("<button onClick=@( () => Createnn(\"" + nnRelation.nnTable + "\"))></button>");
+                            }
+                            else
+                            {
+                                w.WriteLine("<button onClick=@( () => nnCreate(\"" + nnRelation.nnTable + "\"))></button>");
+                            }
                             w.WriteLine("<table>\n\t<thead>\n\t\t<tr>");
                             foreach (var attr in nnRelation.atributes)
                             {
@@ -69,7 +77,7 @@ namespace ViewGenerator.Generator
                             }
                             w.WriteLine("\t\t</tr>\n\t</thead>");
                             w.WriteLine("\t<tbody>");
-                            w.WriteLine("\t@foreach(var entity in @model." + nnRelation.nnTable + "){");
+                            w.WriteLine("\t@foreach(var entity in @" + nnRelation.nnTable + "s){");
                             w.WriteLine("\t\t<tr>");
                             foreach (var attr in nnRelation.atributes)
                             {
@@ -107,8 +115,9 @@ namespace ViewGenerator.Generator
                             string nnRelationTable = nnRelation.nnTable;
                             var relationModel = model.nnRelations.Where(x => x.nnTable == nnRelationTable).SingleOrDefault();
                             var otherTable = relationModel.nnProps.table1 == thisTable ? relationModel.nnProps.table2 : relationModel.nnProps.table1;
-                            w.WriteLine("ICollection<" + projectName + ".Shared.Models." + otherTable + "> " + otherTable.ToLower() + "s = new List<" + projectName + ".Shared.Models." + otherTable + ">()");
+                            w.WriteLine("ICollection<" + projectName + ".Shared.Models." + otherTable + "> " + relationModel.nnTable.ToLower() + "s = new List<" + projectName + ".Shared.Models." + otherTable + ">();");
                         }
+
                         w.WriteLine("\tprotected override async Task OnInitAsync(){\n\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + table.dbTable + ">(\"/api/" + table.dbTable.ToLower() + "/\"+Id);");
                         foreach (var child in table.children)
                         {
@@ -122,7 +131,7 @@ namespace ViewGenerator.Generator
                             string nnRelationTable = nnRelation.nnTable;
                             var relationModel = model.nnRelations.Where(x => x.nnTable == nnRelationTable).SingleOrDefault();
                             var otherTable = relationModel.nnProps.table1 == thisTable ? relationModel.nnProps.table2 : relationModel.nnProps.table1;
-                            w.WriteLine("\t\t" + otherTable.ToLower() + "s = await Http.GetJsonAsync<List<" + projectName + ".Shared.Models." + otherTable + ">>(\"/api/" + thisTable.ToLower() + "/s/" + otherTable.ToLower() + "s/\"+Id);");
+                            w.WriteLine("\t\t" + relationModel.nnTable.ToLower() + "s = await Http.GetJsonAsync<List<" + projectName + ".Shared.Models." + otherTable + ">>(\"/api/" + thisTable.ToLower() + "/" + otherTable.ToLower() + "/\"+Id);");
                         }
                         w.WriteLine("\t}");
                         if (table.children.Count > 0)
@@ -138,6 +147,9 @@ namespace ViewGenerator.Generator
 
                             w.WriteLine("\tvoid nnEdit(int id, string table){\n\t\turiHelper.NavigateTo(\"/\"+table.ToLower()+\"/\"+Id+\"/\"+id);\n\t}");
                             w.WriteLine("\tvoid nnDelete(int id, string table){\n\t\turiHelper.NavigateTo(\"/\" + table.ToLower() + \"/delete/\"+Id+\"/\"+id);\n\t}");
+                            
+                            w.WriteLine("\tvoid Createnn(string nnTable){\n\t\turiHelper.NavigateTo(\"/\"+nnTable+\"/"+table.dbTable.ToLower()+"/\"+Id+\"/0\")");
+                            w.WriteLine("\tvoid nnCreate(string nnTable){\n\t\turiHelper.NavigateTo(\"/\"+nnTable+\"/" + table.dbTable.ToLower() + "/0/\"+Id)");
 
                         }
                         w.WriteLine("}");
@@ -305,7 +317,7 @@ namespace ViewGenerator.Generator
                         }
                         w.WriteLine("\t</tbody>\n</table>");
                         w.WriteLine("\t<button type=\"submit\" class=\"btn btn - success\">Save</button>\n</form>\n\n@functions{");
-                        w.WriteLine("\t[Parameter]\n\tprivate string Id1 {get; set;} \n\t[Parameter]\n\tprivate string Id2" +
+                        w.WriteLine("\t[Parameter]\n\tprivate string Id1 {get; set;} \n\t[Parameter]\n\tprivate string Id2 {get; set;}" +
                             "\n\n\t" + projectName + ".Shared.Models." + nNModel.nnTable + " " +
                             "model = new " + projectName + ".Shared.Models." + nNModel.nnTable + "();");
                         foreach (var attr in nNModel.atributes.Where(x => x.foreignKey == true))
@@ -313,7 +325,7 @@ namespace ViewGenerator.Generator
                             w.WriteLine("\tList<" + projectName + ".Shared.Models.SelectListItem> options" + attr.name.ToLower() + " = new List<" + projectName + ".Shared.Models.SelectListItem>();");
                         }
                         w.WriteLine("\tstring message = \"\";");
-                        w.WriteLine("\tprotected override async Task OnInitAsync(){\n\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + nNModel.nnTable + ">(\"/api/" + nNModel.nnTable.ToLower() + "/\"+Id);");
+                        w.WriteLine("\tprotected override async Task OnInitAsync(){\n\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + nNModel.nnTable + ">(\"/api/" + nNModel.nnTable.ToLower() + "/\"+Id1+\"/\"+Id2);");
                         foreach (var attr in nNModel.atributes.Where(x => x.foreignKey == true))
                         {
                             w.WriteLine("\t\toptions" + attr.name.ToLower() + " = await Http.GetJsonAsync<List<" + projectName + ".Shared.Models.SelectListItem>>(\"/api/" + nNModel.nnTable.ToLower() + "s/" + attr.fkTable.ToLower() + attr.fkValue.ToLower() + "\");");
@@ -329,15 +341,15 @@ namespace ViewGenerator.Generator
                             condition = condition.Substring(0, condition.Length - 2);
                             w.WriteLine("\tpublic async Task Post(){\n\t\ttry{\n\t\t\tif(" + condition + "){\n\t\t\t\tmessage=\"Please, fill all fields\";\n\t\t\t}");
                             w.WriteLine("\t\t\telse if(model.Id==0){\n\t\t\t\tawait Http.SendJsonAsync(HttpMethod.Post, \"/api/" + nNModel.nnTable.ToLower() + "/create\", model);" +
-                                "\n\t\t\t\turiHelper.NavigateTo(\"/" + nNModel.nnTable.ToLower() + "s\");\n\t\t\t}");
+                                "\n\t\t\t\turiHelper.NavigateTo(\"/" + nNModel.nnTable.ToLower() + "/\"+Id1+\"/\"+Id2);\n\t\t\t}");
                         }
                         else
                         {
                             w.WriteLine("\tpublic async Task Post(){\n\t\ttry{\n\t\t\tif(model.Id==0){\n\t\t\t\tawait Http.SendJsonAsync(HttpMethod.Post, \"/api/" + nNModel.nnTable.ToLower() + "/create\",model);" +
-                                "\n\t\t\t\t\turiHelper.NavigateTo(\"/" + nNModel.nnTable.ToLower() + "s\");\n\t\t\t}");
+                                "\n\t\t\t\t\turiHelper.NavigateTo(\"/" + nNModel.nnTable.ToLower() + "/\"+Id1+\"/\"+Id2);\n\t\t\t}");
                         }
                         w.WriteLine("\t\t\telse{\n\t\t\t\tawait Http.SendJsonAsync(HttpMethod.Post, \"/api/" + nNModel.nnTable.ToLower() + "/edit\",model);" +
-                            "\n\t\t\turiHelper.NavigateTo(\"/" + nNModel.nnTable.ToLower() + "s\");\n\t\t\t}");
+                            "\n\t\t\turiHelper.NavigateTo(\"/" + nNModel.nnTable.ToLower() + "/\"+Id1+\"/\"+Id2);\n\t\t\t}");
                         w.WriteLine("\t\t}\n\t\tcatch(Exception e){\n\t\t\tConsole.WriteLine(e.Message);\n\t\t\tthrow;\n\t\t}\n\t}\n}");
 
                     }

@@ -32,6 +32,18 @@ namespace Master_v2.Server.DataAccess
 			}
 		}
 
+        public StoreArticle GetById(int id1, int id2)
+        {
+            try
+            {
+                return _context.StoreArticle.Where(x => x.StoreId == id1 && x.ArticleId == id2).SingleOrDefault();
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
+        }
+
 		public void Delete(int id1, int id2){
 			StoreArticle entity = _context.StoreArticle.Where(x=>x.StoreId == id1 && id2 == x.ArticleId).SingleOrDefault();
 			if (entity != null){

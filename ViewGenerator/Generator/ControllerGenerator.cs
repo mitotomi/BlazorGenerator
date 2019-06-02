@@ -99,15 +99,21 @@ namespace ViewGenerator.Generator
                         w.WriteLine("\tpublic class " + nnModel.nnTable + "Controller : Controller \n\t{");
                         w.WriteLine("\t\tRepo _repository=new Repo();\n\t\tRepo2 _repo2 = new Repo2();");
                         // get for first table
-                        w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "/" + nnModel.nnProps.table1.ToLower() + "/{id}\")]");
+                        w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "/" + nnModel.nnProps.table2.ToLower() + "/{id}\")]");
                         w.WriteLine("\t\tpublic List<" + nnModel.nnProps.table2 + "> GetFor" + nnModel.nnProps.table1 + " (int id){");
                         w.WriteLine("\t\t\treturn _repository.Get" + nnModel.nnProps.table2 + "(id);");
                         w.WriteLine("\t\t}\n");
                         // get for second table
-                        w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "/" + nnModel.nnProps.table2.ToLower() + "/{id}\")]");
+                        w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "/" + nnModel.nnProps.table1.ToLower() + "/{id}\")]");
                         w.WriteLine("\t\tpublic List<" + nnModel.nnProps.table1 + "> GetFor" + nnModel.nnProps.table2 + " (int id){");
                         w.WriteLine("\t\t\treturn _repository.Get" + nnModel.nnProps.table1 + "(id);");
                         w.WriteLine("\t\t}\n");
+                        //get by ids
+                        w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "/{id1}/{id2}\")]");
+                        w.WriteLine("\t\tpublic " + nnModel.nnTable + " GetById(int id1, int id2){");
+                        w.WriteLine("\t\t\tif(id1==0 || id2==0){\n\t\t\t\tvar ret=new "+nnModel.nnTable+"();" +
+                            "\n\t\t\t\tret."+nnModel.nnProps.attr1+"=id1;\n\t\t\t\tret."+nnModel.nnProps.attr2+"=id2;\n\t\t\t\treturn ret;\n\t\t\t}\n\t\t\telse{");
+                        w.WriteLine("\t\t\t\treturn _repository.GetById(id1,id2);\n\t\t\t}\n\t\t}\n");
                         // post nn
                         w.WriteLine("\t\t[HttpPost]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "/create\")]");
                         w.WriteLine("\t\tpublic void Post([FromBody] " + nnModel.nnTable + " model){");

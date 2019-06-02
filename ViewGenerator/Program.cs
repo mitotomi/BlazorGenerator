@@ -13,10 +13,10 @@ namespace ViewGenerator
             string projectName = "Master_v2";
 
             var model = SetupReader.ReadData(jsonPath);
-            PageGenerator.GenerateReadView(destPath + "Views", model, projectName);
-            PageGenerator.GenerateTableView(destPath + "Views", model, projectName);
-            PageGenerator.GenerateCreateUpdate(destPath + "Views", model, projectName);
-            PageGenerator.GenerateDelete(destPath + "Views", model, projectName);
+            //PageGenerator.GenerateReadView(destPath + "Views", model, projectName);
+            //PageGenerator.GenerateTableView(destPath + "Views", model, projectName);
+            //PageGenerator.GenerateCreateUpdate(destPath + "Views", model, projectName);
+            //PageGenerator.GenerateDelete(destPath + "Views", model, projectName);
             //ControllerGenerator.GenerateController(destPath + "Controllers", model, projectName);
             //DataAccessLayerGenerator.GenerateDataAccessLayer(destPath + "DataAccess", model, projectName);
 

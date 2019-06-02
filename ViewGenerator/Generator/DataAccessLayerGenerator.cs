@@ -76,6 +76,11 @@ namespace ViewGenerator.Generator
                         w.WriteLine("\t\t\ttry{\n\t\t\t\treturn _context." + nnModel.nnTable + ".Where(x=>x." + nnModel.nnProps.attr2 + " == id)." +
                             "Include(x=>x." + nnModel.nnProps.table1 + ").Select(x=>x." + nnModel.nnProps.table1 + ").Distinct().ToList();\n\t\t\t}");
                         w.WriteLine("\t\t\tcatch(Exception e){\n\t\t\t\treturn null;\n\t\t\t}\n\t\t}\n");
+                        //get nn by ids
+                        w.WriteLine("\t\tpublic " + nnModel.nnTable + " GetById(int id1,int id2){");
+                        w.WriteLine("\t\t\ttry{\n\t\t\t\treturn _context." + nnModel.nnTable + "" +
+                            ".Where(x=>x."+nnModel.nnProps.attr1+"==id1 && id2=="+nnModel.nnProps.attr2+").SingleOrDefault();\n\t\t\t}");
+                        w.WriteLine("\t\t\tcatch (Exception e){\n\t\t\t\treturn null;\n\t\t\t}\n\t\t}\n");
                         //delete nnTable
                         w.WriteLine("\t\tpublic void Delete(int id1, int id2){");
                         w.WriteLine("\t\t\t" + nnModel.nnTable + " entity = _context." + nnModel.nnTable + "" +
