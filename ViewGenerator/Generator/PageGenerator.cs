@@ -142,10 +142,10 @@ namespace ViewGenerator.Generator
                         if (table.nNRelations.Count > 0)
                         {
 
-                            w.WriteLine("\tvoid Editnn(int id, string table){\n\t\turiHelper.NavigateTo(\"/\"+table.ToLower()+\"/\"+id+\"/\"+Id);\n\t}");
+                            w.WriteLine("\tvoid Editnn(int id, string table){\n\t\turiHelper.NavigateTo(\"/\"+table.ToLower()+\"/"+table.dbTable.ToLower()+"/\"+id+\"/\"+Id);\n\t}");
                             w.WriteLine("\tvoid Deletenn(int id, string table){\n\t\turiHelper.NavigateTo(\"/\" + table.ToLower() + \"/delete/\"+id+\"/\"+Id);\n\t}");
 
-                            w.WriteLine("\tvoid nnEdit(int id, string table){\n\t\turiHelper.NavigateTo(\"/\"+table.ToLower()+\"/\"+Id+\"/\"+id);\n\t}");
+                            w.WriteLine("\tvoid nnEdit(int id, string table){\n\t\turiHelper.NavigateTo(\"/\"+table.ToLower()+\"/" + table.dbTable.ToLower() + "/\"+Id+\"/\"+id);\n\t}");
                             w.WriteLine("\tvoid nnDelete(int id, string table){\n\t\turiHelper.NavigateTo(\"/\" + table.ToLower() + \"/delete/\"+Id+\"/\"+id);\n\t}");
 
                             w.WriteLine("\tvoid Createnn(string nnTable){\n\t\turiHelper.NavigateTo(\"/\"+nnTable+\"/" + table.dbTable.ToLower() + "/\"+Id+\"/0\");\n\t}");

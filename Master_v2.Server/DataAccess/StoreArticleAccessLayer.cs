@@ -50,8 +50,12 @@ namespace Master_v2.Server.DataAccess
 		}
 		public void Add(StoreArticle storearticle){
 			try{
-				_context.StoreArticle.Add(storearticle);
-				_context.SaveChanges();
+                StoreArticle entity = _context.StoreArticle.Where(x => x.StoreId == storearticle.StoreId && storearticle.ArticleId == x.ArticleId).SingleOrDefault();
+                if (entity == null)
+                {
+                    _context.StoreArticle.Add(storearticle);
+                    _context.SaveChanges();
+                }
 			}
 			catch(Exception e){
 
@@ -70,7 +74,5 @@ namespace Master_v2.Server.DataAccess
 
 			}
 		}
-
-
 	}
 }

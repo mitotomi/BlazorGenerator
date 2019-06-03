@@ -89,8 +89,12 @@ namespace ViewGenerator.Generator
                         w.WriteLine("\t\t}");
                         //post nnTable
                         w.WriteLine("\t\tpublic void Add(" + nnModel.nnTable + " " + nnModel.nnTable.ToLower() + "){");
-                        w.WriteLine("\t\t\ttry{\n\t\t\t\t_context." + nnModel.nnTable + ".Add(" + nnModel.nnTable.ToLower() + ");");
-                        w.WriteLine("\t\t\t\t_context.SaveChanges();\n\t\t\t}");
+                        w.WriteLine("\t\t\ttry{");
+                        w.WriteLine("\t\t\t\t" + nnModel.nnTable + " entity = _context." + nnModel.nnTable + "" +
+                            ".Where(x=>x." + nnModel.nnProps.attr1 + " == id1 && id2 == x." + nnModel.nnProps.attr2 + ").SingleOrDefault();");
+                        w.WriteLine("\t\t\t\tif (entity == null){");
+                        w.WriteLine("\t\t\t\t\t_context." + nnModel.nnTable + ".Add(" + nnModel.nnTable.ToLower() + ");");
+                        w.WriteLine("\t\t\t\t\t_context.SaveChanges();\n\t\t\t\t}\n\t\t\t}");
                         w.WriteLine("\t\t\tcatch(Exception e){\n\n\t\t\t}\n\t\t}\n\n");
                         //update nnTable
                         w.WriteLine("\t\tpublic void Update(" + nnModel.nnTable + " " + nnModel.nnTable.ToLower() + "){");

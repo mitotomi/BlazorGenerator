@@ -69,7 +69,7 @@
             }
             else{
                 await Http.SendJsonAsync(HttpMethod.Post, "/api/storearticle/edit",model);
-                uriHelper.NavigateTo("/storearticle/"+Id1+"/"+Id2);
+                uriHelper.NavigateTo("/"+Table+"s");
             }
         }
         catch(Exception e){
