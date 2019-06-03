@@ -1,4 +1,6 @@
-﻿@page "/storearticle/{id1}/{id2}"
+﻿@page "/storearticle/{table}/{id1}/{id2}"
+@page "/storearticle/{id1}/{id2}"
+
 @inject HttpClient Http
 @inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper
 <h1>Edit StoreArticle</h1>
@@ -40,37 +42,39 @@
 </form>
 
 @functions{
-	[Parameter]
-	private string Id1 {get; set;} 
-	[Parameter]
-	private string Id2 {get; set;}
+    [Parameter]
+    private string Id1 {get; set;}
+    [Parameter]
+    private string Id2 {get; set;}
+    [Parameter]
+    private string Table { get; set; }
 
-	Master_v2.Shared.Models.StoreArticle model = new Master_v2.Shared.Models.StoreArticle();
-	List<Master_v2.Shared.Models.SelectListItem> optionsstoreid = new List<Master_v2.Shared.Models.SelectListItem>();
-	List<Master_v2.Shared.Models.SelectListItem> optionsarticleid = new List<Master_v2.Shared.Models.SelectListItem>();
-	string message = "";
-	protected override async Task OnInitAsync(){
-		model=await Http.GetJsonAsync<Master_v2.Shared.Models.StoreArticle>("/api/storearticle/"+Id1+"/"+Id2);
-		optionsstoreid = await Http.GetJsonAsync<List<Master_v2.Shared.Models.SelectListItem>>("/api/storearticles/storename");
-		optionsarticleid = await Http.GetJsonAsync<List<Master_v2.Shared.Models.SelectListItem>>("/api/storearticles/articlename");
-	}
-	public async Task Post(){
-		try{
-			if(model.StoreId == 0 ||model.ArticleId == 0 ){
-				message="Please, fill all fields";
-			}
-			else if(model.Id==0){
-				await Http.SendJsonAsync(HttpMethod.Post, "/api/storearticle/create", model);
-				uriHelper.NavigateTo("/storearticle/"+Id1+"/"+Id2);
-			}
-			else{
-				await Http.SendJsonAsync(HttpMethod.Post, "/api/storearticle/edit",model);
-			uriHelper.NavigateTo("/storearticle/"+Id1+"/"+Id2);
-			}
-		}
-		catch(Exception e){
-			Console.WriteLine(e.Message);
-			throw;
-		}
-	}
+    Master_v2.Shared.Models.StoreArticle model = new Master_v2.Shared.Models.StoreArticle();
+    List<Master_v2.Shared.Models.SelectListItem> optionsstoreid = new List<Master_v2.Shared.Models.SelectListItem>();
+    List<Master_v2.Shared.Models.SelectListItem> optionsarticleid = new List<Master_v2.Shared.Models.SelectListItem>();
+    string message = "";
+    protected override async Task OnInitAsync(){
+        model=await Http.GetJsonAsync<Master_v2.Shared.Models.StoreArticle>("/api/storearticle/"+Id1+"/"+Id2);
+        optionsstoreid = await Http.GetJsonAsync<List<Master_v2.Shared.Models.SelectListItem>>("/api/storearticles/storename");
+        optionsarticleid = await Http.GetJsonAsync<List<Master_v2.Shared.Models.SelectListItem>>("/api/storearticles/articlename");
+    }
+    public async Task Post(){
+        try{
+            if(model.StoreId == 0 ||model.ArticleId == 0 ){
+                message="Please, fill all fields";
+            }
+            else if(model.Id==0){
+                await Http.SendJsonAsync(HttpMethod.Post, "/api/storearticle/create", model);
+                uriHelper.NavigateTo("/"+Table+"s");
+            }
+            else{
+                await Http.SendJsonAsync(HttpMethod.Post, "/api/storearticle/edit",model);
+                uriHelper.NavigateTo("/storearticle/"+Id1+"/"+Id2);
+            }
+        }
+        catch(Exception e){
+            Console.WriteLine(e.Message);
+            throw;
+        }
+    }
 }

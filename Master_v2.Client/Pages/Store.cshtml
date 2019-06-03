@@ -12,7 +12,7 @@
 
 <h5>StoreArticles</h5>
 
-<button onClick=@( () => Createnn("StoreArticle"))>Create</button>
+<button onclick="@(e=>Createnn("storearticle"))">Create</button>
 <table>
     <thead>
         <tr>
@@ -41,7 +41,7 @@
     protected override async Task OnInitAsync()
     {
         model = await Http.GetJsonAsync<Master_v2.Shared.Models.Store>("/api/store/" + Id);
-        storearticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Article>>("/api/store/article/" + Id);
+        storearticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Article>>("/api/storearticle/article/" + Id);
     }
     void Editnn(int id, string table)
     {
@@ -61,8 +61,10 @@
     }
     void Createnn(string nnTable)
     {
-        uriHelper.NavigateTo("/" + nnTable + "/store/" + Id + "/0");
+        Console.WriteLine(nnTable);
+        uriHelper.NavigateTo("/"+nnTable+"/store/" + Id + "/0");
     }
+   
     void nnCreate(string nnTable)
     {
         uriHelper.NavigateTo("/" + nnTable + "/store/0/" + Id);
