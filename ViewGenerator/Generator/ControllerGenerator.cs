@@ -148,13 +148,15 @@ namespace ViewGenerator.Generator
 
                             foreach (var fkTable in tableValuePairs.Keys)
                             {
+                                int i = 2;
                                 foreach (var value in tableValuePairs[fkTable])
                                 {
                                     w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + nnModel.nnTable.ToLower() + "s/" + fkTable.ToLower() + value.ToLower() + "\")]");
                                     w.WriteLine("\t\tpublic List<SelectListItem> Get" + fkTable + value + "SelectList(){");
-                                    w.WriteLine("\t\t\tvar all=_repo2.GetAll();\n\t\t\tList<SelectListItem> options = new List<SelectListItem>();");
+                                    w.WriteLine("\t\t\tvar all=_repo"+i.ToString()+".GetAll();\n\t\t\tList<SelectListItem> options = new List<SelectListItem>();");
                                     w.WriteLine("\t\t\tforeach(var option in all){\n\t\t\t\toptions.Add(new SelectListItem(option.Id, option." + value + "));\n\t\t\t}");
                                     w.WriteLine("\t\t\treturn options;\n\t\t}");
+                                    i++;
                                 }
                             }
                         }

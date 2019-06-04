@@ -88,10 +88,10 @@ namespace ViewGenerator.Generator
                         w.WriteLine("\t\t\tif (entity != null){\n\t\t\t\t_context." + nnModel.nnTable + ".Remove(entity);\n\t\t\t\t_context.SaveChanges();\n\t\t\t}");
                         w.WriteLine("\t\t}");
                         //post nnTable
-                        w.WriteLine("\t\tpublic void Add(" + nnModel.nnTable + " " + nnModel.nnTable.ToLower() + "){");
+                        w.WriteLine("\t\tpublic void Add(" + nnModel.nnTable + " model){");
                         w.WriteLine("\t\t\ttry{");
                         w.WriteLine("\t\t\t\t" + nnModel.nnTable + " entity = _context." + nnModel.nnTable + "" +
-                            ".Where(x=>x." + nnModel.nnProps.attr1 + " == id1 && id2 == x." + nnModel.nnProps.attr2 + ").SingleOrDefault();");
+                            ".Where(x=>x." + nnModel.nnProps.attr1 + " == model."+nnModel.nnProps.attr1+" && model."+nnModel.nnProps.attr2+" == x." + nnModel.nnProps.attr2 + ").SingleOrDefault();");
                         w.WriteLine("\t\t\t\tif (entity == null){");
                         w.WriteLine("\t\t\t\t\t_context." + nnModel.nnTable + ".Add(" + nnModel.nnTable.ToLower() + ");");
                         w.WriteLine("\t\t\t\t\t_context.SaveChanges();\n\t\t\t\t}\n\t\t\t}");

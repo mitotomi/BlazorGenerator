@@ -12,6 +12,7 @@ namespace Master_v2.Server.Controllers
 	{
 		PersonAccessLayer _repository=new PersonAccessLayer();
 		StoreAccessLayer _repo2 = new StoreAccessLayer();
+
 		[HttpGet]
 		[Route("api/persons")]
 		public IEnumerable<Person> Get(){
