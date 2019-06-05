@@ -142,11 +142,11 @@ namespace ViewGenerator.Generator
                         if (table.nNRelations.Count > 0)
                         {
 
-                            w.WriteLine("\tvoid Editnn(int id, string table){\n\t\turiHelper.NavigateTo(\"/\"+table.ToLower()+\"/"+table.dbTable.ToLower()+"/\"+id+\"/\"+Id);\n\t}");
-                            w.WriteLine("\tvoid Deletenn(int id, string table){\n\t\turiHelper.NavigateTo(\"/\" + table.ToLower() + \"/"+table.dbTable.ToLower()+"/delete/\"+id+\"/\"+Id);\n\t}");
+                            w.WriteLine("\tvoid Editnn(int id, string table){\n\t\turiHelper.NavigateTo(\"/\"+table.ToLower()+\"/" + table.dbTable.ToLower() + "/\"+id+\"/\"+Id);\n\t}");
+                            w.WriteLine("\tvoid Deletenn(int id, string table){\n\t\turiHelper.NavigateTo(\"/\" + table.ToLower() + \"/" + table.dbTable.ToLower() + "/delete/\"+id+\"/\"+Id);\n\t}");
 
                             w.WriteLine("\tvoid nnEdit(int id, string table){\n\t\turiHelper.NavigateTo(\"/\"+table.ToLower()+\"/" + table.dbTable.ToLower() + "/\"+Id+\"/\"+id);\n\t}");
-                            w.WriteLine("\tvoid nnDelete(int id, string table){\n\t\turiHelper.NavigateTo(\"/\" + table.ToLower() + \"/"+table.dbTable.ToLower()+"/delete/\"+Id+\"/\"+id);\n\t}");
+                            w.WriteLine("\tvoid nnDelete(int id, string table){\n\t\turiHelper.NavigateTo(\"/\" + table.ToLower() + \"/" + table.dbTable.ToLower() + "/delete/\"+Id+\"/\"+id);\n\t}");
 
                             w.WriteLine("\tvoid Createnn(string nnTable){\n\t\turiHelper.NavigateTo(\"/\"+nnTable+\"/" + table.dbTable.ToLower() + "/\"+Id+\"/0\");\n\t}");
                             w.WriteLine("\tvoid nnCreate(string nnTable){\n\t\turiHelper.NavigateTo(\"/\"+nnTable+\"/" + table.dbTable.ToLower() + "/0/\"+Id);\n\t}");
@@ -166,39 +166,39 @@ namespace ViewGenerator.Generator
                 {
                     using (StreamWriter w = new StreamWriter(fs, Encoding.UTF8))
                     {
-                        w.WriteLine("@page \"/" + table.dbTable.ToLower() + "/{table}/delete/{id1}/{id2}\"");
+                        w.WriteLine("@page \"/" + table.dbTable.ToLower() + "/delete/{id}\"");
                         w.WriteLine("@inject HttpClient Http\n@inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper");
                         w.WriteLine("<h1>Delete " + table.dbTable + "</h1>\n");
                         w.WriteLine("Are you sure you want to delete this entity");
                         w.WriteLine("\t\t\t<td><button onclick=\"@Yes\">Yes</button> |<button onclick=\"@No\">No</button></td>");
                         w.WriteLine("@functions{");
-                        w.WriteLine("\t[Parameter]\n\tprivate string Id1 {get; set;}");
-                        w.WriteLine("\t[Parameter]\n\tprivate string Id2 {get; set;");
-                        w.WriteLine("\t[Parameter]\n\tprivate string Table {get; set;");
+                        w.WriteLine("\t[Parameter]\n\tprivate string Id {get; set;}");
                         w.WriteLine("\tpublic async Task Yes(){\n\t\tawait Http.DeleteAsync(\"/api/" + table.dbTable.ToLower() + "/delete/\"+Id);" +
-                            "\n\t\turiHelper.NavigateTo(\"/\" + Table.ToLower() + \"s\");\n\t}");
-                        w.WriteLine("\tpublic void No(){\n\t\turiHelper.NavigateTo(\"/\" + Table.ToLower() + \"s\");\n\t}");
+                            "\n\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "s\");\n\t}");
+                        w.WriteLine("\tpublic void No(){\n\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "s\");\n\t}");
                         w.WriteLine("}");
                     }
                 }
             }
-
             foreach (NNModel nNModel in model.nnRelations)
             {
                 using (FileStream fs = new FileStream(viewsPath + "\\" + nNModel.nnTable + "Delete.cshtml", FileMode.Create))
                 {
                     using (StreamWriter w = new StreamWriter(fs, Encoding.UTF8))
                     {
-                        w.WriteLine("@page \"/" + nNModel.nnTable.ToLower() + "/delete/{id}\"");
+
+                        w.WriteLine("@page \"/" + nNModel.nnTable.ToLower() + "/{table}/delete/{id1}/{id2}\"");
                         w.WriteLine("@inject HttpClient Http\n@inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper");
                         w.WriteLine("<h1>Delete " + nNModel.nnTable + "</h1>\n");
                         w.WriteLine("Are you sure you want to delete this entity");
                         w.WriteLine("\t\t\t<td><button onclick=\"@Yes\">Yes</button> |<button onclick=\"@No\">No</button></td>");
                         w.WriteLine("@functions{");
-                        w.WriteLine("\t[Parameter]\n\tprivate string Id {get; set;}");
-                        w.WriteLine("\tpublic async Task Yes(){\n\t\tawait Http.DeleteAsync(\"/api/" + nNModel.nnTable.ToLower() + "/delete/\"+Id);" +
-                            "\n\t\turiHelper.NavigateTo(\"/" + nNModel.nnTable.ToLower() + "s\");\n\t}");
-                        w.WriteLine("\tpublic void No(){\n\t\turiHelper.NavigateTo(\"/" + nNModel.nnTable.ToLower() + "s\");\n\t}");
+                        w.WriteLine("\t[Parameter]\n\tprivate string Id1 {get; set;}");
+                        w.WriteLine("\t[Parameter]\n\tprivate string Id2 {get; set;}");
+                        w.WriteLine("\t[Parameter]\n\tprivate string Table {get; set;}");
+                        w.WriteLine("\tpublic async Task Yes(){\n\t\tawait Http.DeleteAsync(\"/api/" + nNModel.nnTable.ToLower() + "/delete/\"+Id1+\"/\"+Id2);" +
+                            "\n\t\turiHelper.NavigateTo(\"/\" + Table.ToLower() + \"s\");\n\t}");
+                        w.WriteLine("\tpublic void No(){\n\t\turiHelper.NavigateTo(\"/\" + Table.ToLower() + \"s\");\n\t}");
                         w.WriteLine("}");
                     }
                 }

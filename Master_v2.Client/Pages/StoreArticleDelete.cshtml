@@ -1,7 +1,7 @@
-﻿@page "/person/{table}/delete/{id1}/{id2}"
+﻿@page "/storearticle/{table}/delete/{id1}/{id2}"
 @inject HttpClient Http
 @inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper
-<h1>Delete Person</h1>
+<h1>Delete StoreArticle</h1>
 
 Are you sure you want to delete this entity
 			<td><button onclick="@Yes">Yes</button> |<button onclick="@No">No</button></td>
@@ -9,11 +9,11 @@ Are you sure you want to delete this entity
 	[Parameter]
 	private string Id1 {get; set;}
 	[Parameter]
-	private string Id2 {get; set;
+	private string Id2 {get; set;}
 	[Parameter]
-	private string Table {get; set;
+	private string Table {get; set;}
 	public async Task Yes(){
-		await Http.DeleteAsync("/api/person/delete/"+Id);
+		await Http.DeleteAsync("/api/storearticle/delete/"+Id1+"/"+Id2);
 		uriHelper.NavigateTo("/" + Table.ToLower() + "s");
 	}
 	public void No(){
