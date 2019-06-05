@@ -1,0 +1,50 @@
+﻿@page "/article/{id}"
+@inject HttpClient Http
+@inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper
+<h1>Edit Article</h1>
+
+<form onsubmit="@Post">
+<table>
+	<tbody>
+		<tr>
+			<td>
+				<input type="number" bind="@model.Id" asp-for="Id" hidden/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label>Name</label>
+				<input type="text" bind="@model.Name" asp-for="Name" />
+			</td>
+		</tr>
+	</tbody>
+</table>
+	<button type="submit" class="btn btn - success">Save</button>
+</form>
+
+@functions{
+	[Parameter]
+	private string Id {get; set;}
+
+	Master_v2.Shared.Models.Article model = new Master_v2.Shared.Models.Article();
+	string message = "";
+	protected override async Task OnInitAsync(){
+		model=await Http.GetJsonAsync<Master_v2.Shared.Models.Article>("/api/article/"+Id);
+	}
+	public async Task Post(){
+		try{
+			if(model.Id==0){
+				await Http.SendJsonAsync(HttpMethod.Post, "/api/article/create",model);
+					uriHelper.NavigateTo("/articles");
+			}
+			else{
+				await Http.SendJsonAsync(HttpMethod.Post, "/api/article/edit",model);
+			uriHelper.NavigateTo("/articles");
+			}
+		}
+		catch(Exception e){
+			Console.WriteLine(e.Message);
+			throw;
+		}
+	}
+}

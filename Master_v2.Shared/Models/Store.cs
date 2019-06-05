@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Master_v2.Server.Models
+namespace Master_v2.Shared.Models
 {
     public partial class Store
     {

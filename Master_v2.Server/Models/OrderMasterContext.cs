@@ -1,4 +1,5 @@
 ﻿using System;
+using Master_v2.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 

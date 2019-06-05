@@ -1,0 +1,73 @@
+﻿@page "/store/{id}"
+@inject HttpClient Http
+@inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper
+<h1>Edit Store</h1>
+
+<h6>@message</h6>
+<form onsubmit="@Post">
+<table>
+	<tbody>
+		<tr>
+			<td>
+				<input type="number" bind="@model.Id" asp-for="Id" hidden/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label>Name</label>
+				<input type="text" bind="@model.Name" asp-for="Name" />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label>Address</label>
+				<input type="text" bind="@model.Address" asp-for="Address" />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label>OwnerId</label>
+				<select bind="@model.OwnerId">
+					<option value="">Choose value</option>
+					@foreach(var option in optionsownerid){
+						<option value="@option.Key">@option.Value</option>
+					}
+				</select>
+			</td>
+		</tr>
+	</tbody>
+</table>
+	<button type="submit" class="btn btn - success">Save</button>
+</form>
+
+@functions{
+	[Parameter]
+	private string Id {get; set;}
+
+	Master_v2.Shared.Models.Store model = new Master_v2.Shared.Models.Store();
+	List<Master_v2.Shared.Models.SelectListItem> optionsownerid = new List<Master_v2.Shared.Models.SelectListItem>();
+	string message = "";
+	protected override async Task OnInitAsync(){
+		model=await Http.GetJsonAsync<Master_v2.Shared.Models.Store>("/api/store/"+Id);
+		optionsownerid = await Http.GetJsonAsync<List<Master_v2.Shared.Models.SelectListItem>>("/api/stores/personlastname");
+	}
+	public async Task Post(){
+		try{
+			if(model.OwnerId == 0 ){
+				message="Please, fill all fields";
+			}
+			else if(model.Id==0){
+				await Http.SendJsonAsync(HttpMethod.Post, "/api/store/create", model);
+				uriHelper.NavigateTo("/stores");
+			}
+			else{
+				await Http.SendJsonAsync(HttpMethod.Post, "/api/store/edit",model);
+			uriHelper.NavigateTo("/stores");
+			}
+		}
+		catch(Exception e){
+			Console.WriteLine(e.Message);
+			throw;
+		}
+	}
+}

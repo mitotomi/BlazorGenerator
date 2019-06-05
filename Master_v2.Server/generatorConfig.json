@@ -71,6 +71,24 @@
           "type": "text",
           "foreignKey": false
         }
+      },
+      "Bill": {
+        "id": {
+          "name": "Id",
+          "hidden": true,
+          "type": "number"
+        },
+        "personId": {
+          "name": "PersonId",
+          "type": "number",
+          "foreignKey": true,
+          "fkTable": "Person",
+          "fkValue": "LastName"
+        },
+        "date": {
+          "name": "Date",
+          "type": "date"
+        }
       }
     }
   },
@@ -102,6 +120,33 @@
       "fkTable": "Person",
       "fkValue": "LastName"
     },
+    "children": {
+      "Bill": {
+        "id": {
+          "name": "Id",
+          "hidden": true,
+          "type": "number"
+        },
+        "date": {
+          "name": "Date",
+          "type": "date"
+        },
+        "personId": {
+          "name": "PersonId",
+          "type": "number",
+          "foreignKey": true,
+          "fkTable": "Person",
+          "fkValue": "LastName"
+        },
+        "storeId": {
+          "name": "StoreId",
+          "type": "number",
+          "foreignKey": true,
+          "fkTable": "Store",
+          "fkValue": "Value"
+        }
+      }
+    },
     "n-n": {
       "StoreArticle": {
         "id": {
@@ -119,6 +164,31 @@
           "foreignKey": false
         }
       }
+    }
+  },
+  "Bill": {
+    "id": {
+      "name": "Id",
+      "hidden": true,
+      "type": "number"
+    },
+    "personId": {
+      "name": "PersonId",
+      "type": "number",
+      "foreignKey": true,
+      "fkTable": "Person",
+      "fkValue": "LastName"
+    },
+    "date": {
+      "name": "Date",
+      "type": "date"
+    },
+    "storeId": {
+      "name": "StoreId",
+      "type": "number",
+      "foreignKey": true,
+      "fkTable": "Store",
+      "fkValue": "Name"
     }
   },
   "Article": {
@@ -161,6 +231,35 @@
         "articleId": {
           "name": "ArticleId",
           "hidden": false,
+          "type": "number",
+          "foreignKey": true,
+          "fkTable": "Article",
+          "fkValue": "Name"
+        }
+      }
+    },
+    "BillArticle": {
+      "props": {
+        "table1": "Bill",
+        "table2": "Article",
+        "attr1": "BillId",
+        "attr2": "ArticleId"
+      },
+      "attr": {
+        "id": {
+          "name": "Id",
+          "hidden": true,
+          "type": "number"
+        },
+        "billId": {
+          "name": "BillId",
+          "type": "number",
+          "foreignKey": true,
+          "fkTable": "Bill",
+          "fkValue": "Date"
+        },
+        "articleId": {
+          "name": "ArticleId",
           "type": "number",
           "foreignKey": true,
           "fkTable": "Article",

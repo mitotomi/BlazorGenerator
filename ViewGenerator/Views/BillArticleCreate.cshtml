@@ -1,0 +1,78 @@
+﻿@page "/billarticle/{table}/{id1}/{id2}"
+@inject HttpClient Http
+@inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper
+<h1>Edit BillArticle</h1>
+
+<h6>@message</h6>
+<form onsubmit="@Post">
+<table>
+	<tbody>
+		<tr>
+			<td>
+				<input type="number" bind="@model.Id" asp-for="Id" hidden/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label>BillId</label>
+				<select bind="@model.BillId">
+					<option value="">Choose value</option>
+					@foreach(var option in optionsbillid){
+						<option value="@option.Key">@option.Value</option>
+					}
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label>ArticleId</label>
+				<select bind="@model.ArticleId">
+					<option value="">Choose value</option>
+					@foreach(var option in optionsarticleid){
+						<option value="@option.Key">@option.Value</option>
+					}
+				</select>
+			</td>
+		</tr>
+	</tbody>
+</table>
+	<button type="submit" class="btn btn - success">Save</button>
+</form>
+
+@functions{
+	[Parameter]
+	private string Id1 {get; set;} 
+	[Parameter]
+	private string Id2 {get; set;}
+	[Parameter]
+	private string Table{get; set;}
+
+	Master_v2.Shared.Models.BillArticle model = new Master_v2.Shared.Models.BillArticle();
+	List<Master_v2.Shared.Models.SelectListItem> optionsbillid = new List<Master_v2.Shared.Models.SelectListItem>();
+	List<Master_v2.Shared.Models.SelectListItem> optionsarticleid = new List<Master_v2.Shared.Models.SelectListItem>();
+	string message = "";
+	protected override async Task OnInitAsync(){
+		model=await Http.GetJsonAsync<Master_v2.Shared.Models.BillArticle>("/api/billarticle/"+Id1+"/"+Id2);
+		optionsbillid = await Http.GetJsonAsync<List<Master_v2.Shared.Models.SelectListItem>>("/api/billarticles/billdate");
+		optionsarticleid = await Http.GetJsonAsync<List<Master_v2.Shared.Models.SelectListItem>>("/api/billarticles/articlename");
+	}
+	public async Task Post(){
+		try{
+			if(model.BillId == 0 ||model.ArticleId == 0 ){
+				message="Please, fill all fields";
+			}
+			else if(model.Id==0){
+				await Http.SendJsonAsync(HttpMethod.Post, "/api/billarticle/create", model);
+				uriHelper.NavigateTo("/"+Table+"s");
+			}
+			else{
+				await Http.SendJsonAsync(HttpMethod.Post, "/api/billarticle/edit",model);
+			uriHelper.NavigateTo("/"+Table+"s");
+			}
+		}
+		catch(Exception e){
+			Console.WriteLine(e.Message);
+			throw;
+		}
+	}
+}

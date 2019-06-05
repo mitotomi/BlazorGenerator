@@ -1,0 +1,19 @@
+﻿@page "/articles/{id}"
+@inject HttpClient Http
+@inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper
+@*
+	put routes for page on top with @page /{wishedRoute}
+*@
+
+<p hidden><span> Id</span> @model.Id</p>
+<p ><span> Name</span> @model.Name</p>
+
+@functions{
+	[Parameter]
+	private string Id {get; set;}
+
+	Master_v2.Shared.Models.Article model = new Master_v2.Shared.Models.Article();
+	protected override async Task OnInitAsync(){
+		model=await Http.GetJsonAsync<Master_v2.Shared.Models.Article>("/api/article/"+Id);
+	}
+}
