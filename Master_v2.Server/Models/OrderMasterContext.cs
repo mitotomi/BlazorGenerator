@@ -1,5 +1,4 @@
 ﻿using System;
-using Master_v2.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -50,6 +49,12 @@ namespace Master_v2.Server.Models
                     .HasForeignKey(d => d.PersonId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Bill_Person");
+
+                entity.HasOne(d => d.Store)
+                    .WithMany(p => p.Bill)
+                    .HasForeignKey(d => d.StoreId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Bill_Store");
             });
 
             modelBuilder.Entity<BillArticle>(entity =>
