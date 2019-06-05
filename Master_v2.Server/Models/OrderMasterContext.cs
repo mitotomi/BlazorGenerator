@@ -17,6 +17,8 @@ namespace Master_v2.Server.Models
         }
 
         public virtual DbSet<Article> Article { get; set; }
+        public virtual DbSet<Bill> Bill { get; set; }
+        public virtual DbSet<BillArticle> BillArticle { get; set; }
         public virtual DbSet<Person> Person { get; set; }
         public virtual DbSet<Store> Store { get; set; }
         public virtual DbSet<StoreArticle> StoreArticle { get; set; }
@@ -37,6 +39,32 @@ namespace Master_v2.Server.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<Bill>(entity =>
+            {
+                entity.Property(e => e.Date).HasColumnType("date");
+
+                entity.HasOne(d => d.Person)
+                    .WithMany(p => p.Bill)
+                    .HasForeignKey(d => d.PersonId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Bill_Person");
+            });
+
+            modelBuilder.Entity<BillArticle>(entity =>
+            {
+                entity.HasOne(d => d.Article)
+                    .WithMany(p => p.BillArticle)
+                    .HasForeignKey(d => d.ArticleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_BillArticle_Article");
+
+                entity.HasOne(d => d.Bill)
+                    .WithMany(p => p.BillArticle)
+                    .HasForeignKey(d => d.BillId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_BillArticle_Bill");
             });
 
             modelBuilder.Entity<Person>(entity =>

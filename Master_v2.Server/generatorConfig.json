@@ -3,56 +3,48 @@
     "id": {
       "name": "Id",
       "hidden": true,
-      "validated": false,
       "nullable": false,
       "type": "number"
     },
     "name": {
       "name": "Name",
       "hidden": false,
-      "validated": false,
       "nullable": false,
       "type": "text"
     },
     "lastName": {
       "name": "LastName",
       "hidden": false,
-      "validated": false,
       "nullable": false,
       "type": "text"
     },
     "address": {
       "name": "Address",
       "hidden": false,
-      "validated": false,
       "nullable": false,
       "type": "text"
     },
     "oib": {
       "name": "Oib",
       "hidden": false,
-      "validated": true,
       "nullable": false,
       "type": "text"
     },
     "birthDate": {
       "name": "BirthDate",
       "hidden": false,
-      "validated": false,
       "nullable": false,
       "type": "date"
     },
     "gender": {
       "name": "Gender",
       "hidden": false,
-      "validated": false,
       "nullable": false,
       "type": "text"
     },
     "isActive": {
       "name": "IsActive",
       "hidden": false,
-      "validated": false,
       "nullable": false,
       "type": "checkbox"
     },
@@ -86,14 +78,12 @@
     "id": {
       "name": "Id",
       "hidden": true,
-      "validated": false,
       "nullable": false,
       "type": "number"
     },
     "name": {
       "name": "Name",
       "hidden": false,
-      "validated": false,
       "nullable": false,
       "type": "text"
     },
@@ -135,14 +125,12 @@
     "id": {
       "name": "Id",
       "hidden": true,
-      "nullable": false,
       "type": "number",
       "foreignKey": false
     },
     "name": {
       "name": "Name",
       "hidden": false,
-      "nullable": false,
       "type": "text",
       "foreignKey": false
     }
@@ -159,14 +147,12 @@
         "id": {
           "name": "Id",
           "hidden": true,
-          "nullable": false,
           "type": "number",
           "foreignKey": false
         },
         "storeId": {
           "name": "StoreId",
           "hidden": false,
-          "nullable": false,
           "type": "number",
           "foreignKey": true,
           "fkTable": "Store",
@@ -175,7 +161,6 @@
         "articleId": {
           "name": "ArticleId",
           "hidden": false,
-          "nullable": false,
           "type": "number",
           "foreignKey": true,
           "fkTable": "Article",

@@ -14,8 +14,6 @@ namespace ViewGenerator.Models
         public string name { get; set; }
         public string type { get; set; }
         public bool hidden { get; set; }
-        public bool validationNeeded { get; set; }
-        public bool nullable { get; set; }
         public bool foreignKey { get; set; }
         public string fkTable { get; set; }
         public string fkValue { get; set; }
