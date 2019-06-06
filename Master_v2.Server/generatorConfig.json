@@ -189,6 +189,19 @@
       "foreignKey": true,
       "fkTable": "Store",
       "fkValue": "Name"
+    },
+    "n-n": {
+      "BillArticle": {
+        "id": {
+          "name": "Id",
+          "hidden": true,
+          "type": "number"
+        },
+        "name": {
+          "name": "Name",
+          "type": "text"
+        }
+      }
     }
   },
   "Article": {
@@ -203,6 +216,26 @@
       "hidden": false,
       "type": "text",
       "foreignKey": false
+    },
+    "n-n": {
+      "BillArticle": {
+        "id": {
+          "name": "Id",
+          "hidden": true,
+          "type": "number"
+        },
+        "date": {
+          "name": "Date",
+          "type": "date"
+        },
+        "personId": {
+          "name": "PersonId",
+          "type": false,
+          "foreignKey": true,
+          "fkTable": "Article",
+          "fkValue": "Name"
+        }
+      }
     }
   },
   "n-n": {

@@ -10,12 +10,53 @@
 <p ><span> Date</span> @model.Date</p>
 <p ><span> StoreId</span> @model.StoreId</p>
 
+<h5>BillArticles</h5>
+
+<button onclick="@( () => Createnn("billarticle"))">Create</button>
+<table>
+	<thead>
+		<tr>
+			<td hidden> Id</td>
+			<td> Name</td>
+		</tr>
+	</thead>
+	<tbody>
+	@foreach(var entity in billarticles){
+		<tr>
+			<td  hidden> @entity.Id</td>
+			<td > @entity.Name</td>
+			<td><button onclick="@(e=>nnEdit(entity.Id, "BillArticle"))">Edit</button> |<button onclick="@(e=>nnDelete(entity.Id, "BillArticle"))">Delete</button></td>
+		</tr>
+	}
+	</tbody>
+</table>
+
 @functions{
 	[Parameter]
 	private string Id {get; set;}
 
 	Master_v2.Shared.Models.Bill model = new Master_v2.Shared.Models.Bill();
+ICollection<Master_v2.Shared.Models.Article> billarticles = new List<Master_v2.Shared.Models.Article>();
 	protected override async Task OnInitAsync(){
 		model=await Http.GetJsonAsync<Master_v2.Shared.Models.Bill>("/api/bill/"+Id);
+		billarticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Article>>("/api/billarticle/article/"+Id);
+	}
+	void Editnn(int id, string table){
+		uriHelper.NavigateTo("/"+table.ToLower()+"/bill/"+id+"/"+Id);
+	}
+	void Deletenn(int id, string table){
+		uriHelper.NavigateTo("/" + table.ToLower() + "/bill/delete/"+id+"/"+Id);
+	}
+	void nnEdit(int id, string table){
+		uriHelper.NavigateTo("/"+table.ToLower()+"/bill/"+Id+"/"+id);
+	}
+	void nnDelete(int id, string table){
+		uriHelper.NavigateTo("/" + table.ToLower() + "/bill/delete/"+Id+"/"+id);
+	}
+	void Createnn(string nnTable){
+		uriHelper.NavigateTo("/"+nnTable+"/bill/"+Id+"/0");
+	}
+	void nnCreate(string nnTable){
+		uriHelper.NavigateTo("/"+nnTable+"/bill/0/"+Id);
 	}
 }
