@@ -31,6 +31,7 @@
         <tr>
             <td> Id</td>
             <td> Name</td>
+            <td> Price</td>
             <td> Actions</td>
         </tr>
     </thead>
@@ -40,6 +41,7 @@
             <tr>
                 <td> @entity.Id</td>
                 <td> @entity.Name</td>
+                <td> @entity.Price</td>
                 <td><button onclick="@(e=>nnDelete(entity.Id))">Delete</button></td>
             </tr>
         }

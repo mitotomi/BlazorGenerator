@@ -13,6 +13,7 @@ namespace Master_v2.Shared.Models
 
         public int Id { get; set; }
         public string Name { get; set; }
+        public double Price { get; set; }
 
         public ICollection<BillArticle> BillArticle { get; set; }
         public ICollection<StoreArticle> StoreArticle { get; set; }

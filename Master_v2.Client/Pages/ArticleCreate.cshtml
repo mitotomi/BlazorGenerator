@@ -5,19 +5,24 @@
 
 <form onsubmit="@Post">
 <table>
-	<tbody>
-		<tr>
-			<td>
-				<input type="number" bind="@model.Id" asp-for="Id" hidden/>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<label>Name</label>
-				<input type="text" bind="@model.Name" asp-for="Name" />
-			</td>
-		</tr>
-	</tbody>
+    <tbody>
+        <tr>
+            <td>
+                <input type="number" bind="@model.Id" asp-for="Id" hidden />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Name</label>
+                <input type="text" bind="@model.Name" asp-for="Name" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="number" bind="@model.Price" asp-for="Price" />
+            </td>
+        </tr>
+    </tbody>
 </table>
 	<button type="submit" class="btn btn - success">Save</button>
 </form>
