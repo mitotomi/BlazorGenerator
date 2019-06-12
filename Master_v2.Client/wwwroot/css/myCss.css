@@ -1,0 +1,27 @@
+﻿table{
+    border:2px solid !important;
+}
+
+table > tbody > td{
+    border:2px solid !important;
+}
+
+table > thead {
+    border:2px solid !important;
+}
+
+.table{
+    margin-top:15px;
+    margin-bottom:15px;
+    width:90%;
+}
+
+.border-bottom{
+    border-bottom:1px solid gray !important;
+    padding-bottom:15px;
+    margin-bottom:15px;
+}
+
+.margin-bottom{
+    margin-bottom:15px;
+}

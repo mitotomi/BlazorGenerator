@@ -2,92 +2,124 @@
 @inject HttpClient Http
 @inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper
 @*
-	put routes for page on top with @page /{wishedRoute}
+    put routes for page on top with @page /{wishedRoute}
 *@
+<div class="border-bottom">
+    <p hidden><span> Id</span> @model.Id</p>
+    <p><span> Name:</span> @model.Name</p>
+    <p><span> Address:</span> @model.Address</p>
+    <p>
+        <span> OwnerId:</span>
+        @if (persons.Count < 1)
+        {
+            @model.OwnerId;
+        }
+        else
+        {
+            @persons.Where(x => x.Id == model.OwnerId).Single().LastName
+        }
+    </p>
+</div>
 
-<p hidden><span> Id</span> @model.Id</p>
-<p ><span> Name</span> @model.Name</p>
-<p ><span> Address</span> @model.Address</p>
-<p ><span> OwnerId</span> @model.OwnerId</p>
+<div class="border-bottom">
+    <h5>Bills</h5>
+    <table class="table">
+        <thead>
+            <tr>
+                <td hidden> Id</td>
+                <td> Date</td>
+                <td> Person</td>
+                <td> Actions</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var entity in @model.Bill)
+            {
+                <tr>
+                    <td hidden> @entity.Id</td>
+                    <td> @entity.Date</td>
+                    <td>
+                        @persons.Where(x => x.Id == entity.PersonId).Single().Name
+                        @persons.Where(x => x.Id == entity.PersonId).Single().LastName
+                    </td>
+                    <td><button onclick="@(e=>Edit(entity.Id, "Bill"))">Edit</button> |<button onclick="@(e=>Delete(entity.Id, "Bill"))">Delete</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div>
 
-<h3>Bills</h3>
-
-<table>
-	<thead>
-		<tr>
-			<td hidden> Id</td>
-			<td> Date</td>
-			<td> PersonId</td>
-			<td> StoreId</td>
-		</tr>
-	</thead>
-	<tbody>
-	@foreach(var entity in @model.Bill){
-		<tr>
-			<td  hidden> @entity.Id</td>
-			<td > @entity.Date</td>
-			<td > @entity.PersonId</td>
-			<td > @entity.StoreId</td>
-			<td><button onclick="@(e=>Edit(entity.Id, "Bill"))">Edit</button> |<button onclick="@(e=>Delete(entity.Id, "Bill"))">Delete</button></td>
-		</tr>
-	}
-	</tbody>
-</table>
-
-<h5>StoreArticles</h5>
-
-<button onclick="@( () => Createnn("storearticle"))">Create</button>
-<table>
-	<thead>
-		<tr>
-			<td> Id</td>
-			<td> Name</td>
-		</tr>
-	</thead>
-	<tbody>
-	@foreach(var entity in storearticles){
-		<tr>
-			<td > @entity.Id</td>
-			<td > @entity.Name</td>
-			<td><button onclick="@(e=>nnEdit(entity.Id, "StoreArticle"))">Edit</button> |<button onclick="@(e=>nnDelete(entity.Id, "StoreArticle"))">Delete</button></td>
-		</tr>
-	}
-	</tbody>
-</table>
+    @if (createOpened)
+    {
+        <StoreArticleCreate Id1=@Id Id2="0" Table="store" />
+        <button class="margin-bottom" onclick="@finishCreate">Finish</button>
+    }
+    else
+    {
+        <h5>StoreArticles</h5>
+        <button onclick="@( () => Createnn("storearticle"))">Edit</button>
+        <table class="table">
+            <thead>
+                <tr>
+                    <td> Id</td>
+                    <td> Name</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var entity in storearticles)
+                {
+                    <tr>
+                        <td> @entity.Id</td>
+                        <td> @entity.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
 
 @functions{
-	[Parameter]
-	private string Id {get; set;}
+    [Parameter]
+    private string Id { get; set; }
 
-	Master_v2.Shared.Models.Store model = new Master_v2.Shared.Models.Store();
-ICollection<Master_v2.Shared.Models.Article> storearticles = new List<Master_v2.Shared.Models.Article>();
-	protected override async Task OnInitAsync(){
-		model=await Http.GetJsonAsync<Master_v2.Shared.Models.Store>("/api/store/"+Id);
-		model.Bill = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Bill>>("/api/store/bill/"+Id);
-		storearticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Article>>("/api/storearticle/article/"+Id);
-	}
-	void Edit(int id, string table){
-		uriHelper.NavigateTo("/"+table.ToLower()+"/"+id);
-	}
-	void Delete(int id, string table){
-		uriHelper.NavigateTo("/" + table.ToLower() + "/delete/"+id);
-	}
-	void Editnn(int id, string table){
-		uriHelper.NavigateTo("/"+table.ToLower()+"/store/"+id+"/"+Id);
-	}
-	void Deletenn(int id, string table){
-		uriHelper.NavigateTo("/" + table.ToLower() + "/store/delete/"+id+"/"+Id);
-	}
-	void nnEdit(int id, string table){
-		uriHelper.NavigateTo("/"+table.ToLower()+"/store/"+Id+"/"+id);
-	}
-	void nnDelete(int id, string table){
-		uriHelper.NavigateTo("/" + table.ToLower() + "/store/delete/"+Id+"/"+id);
-	}
-	void Createnn(string nnTable){
-		uriHelper.NavigateTo("/"+nnTable+"/store/"+Id+"/0");
-	}
-	void nnCreate(string nnTable){
-		uriHelper.NavigateTo("/"+nnTable+"/store/0/"+Id);
-	}
+    Master_v2.Shared.Models.Store model = new Master_v2.Shared.Models.Store();
+    ICollection<Master_v2.Shared.Models.Article> storearticles = new List<Master_v2.Shared.Models.Article>();
+    List<Master_v2.Shared.Models.Person> persons = new List<Master_v2.Shared.Models.Person>();
+
+    bool createOpened;
+
+    protected override async Task OnInitAsync()
+    {
+        persons = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Person>>("/api/Persons");
+        model = await Http.GetJsonAsync<Master_v2.Shared.Models.Store>("/api/store/" + Id);
+        model.Bill = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Bill>>("/api/store/bill/" + Id);
+        storearticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Article>>("/api/storearticle/article/" + Id);
+        createOpened = false;
+    }
+    void Edit(int id, string table)
+    {
+        uriHelper.NavigateTo("/" + table.ToLower() + "/" + id);
+    }
+    void Delete(int id, string table)
+    {
+        uriHelper.NavigateTo("/" + table.ToLower() + "/delete/" + id);
+    }
+    void nnEdit(int id, string table)
+    {
+        uriHelper.NavigateTo("/" + table.ToLower() + "/store/" + Id + "/" + id);
+    }
+    void nnDelete(int id, string table)
+    {
+        uriHelper.NavigateTo("/" + table.ToLower() + "/store/delete/" + Id + "/" + id);
+    }
+    void Createnn(string nnTable)
+    {
+        createOpened = true;
+    }
+    async void finishCreate()
+    {
+        storearticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Article>>("/api/storearticle/article/" + Id);
+        createOpened = false;
+    }
 }
