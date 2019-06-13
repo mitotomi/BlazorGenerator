@@ -2,63 +2,111 @@
 @inject HttpClient Http
 @inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper
 @*
-	put routes for page on top with @page /{wishedRoute}
+    put routes for page on top with @page /{wishedRoute}
 *@
 
-<p hidden><span> Id</span> @model.Id</p>
-<p ><span> PersonId</span> @model.PersonId</p>
-<p ><span> Date</span> @model.Date</p>
-<p ><span> StoreId</span> @model.StoreId</p>
+<div class="border-bottom">
+    <p hidden><span> Id</span> @model.Id</p>
+    <p>
+        <span> Person:</span>
+        @if (persons.Count > 1)
+        {
+            @persons.Where(x => x.Id == model.PersonId).Single().LastName
+        }
+        else
+        {
+            @model.PersonId
+        }
+    </p>
+    <p><span> Date:</span> @model.Date</p>
+    <p>
+        <span> Store:</span>
+        @if (stores.Count > 1)
+        {
+            @stores.Where(x => x.Id == model.StoreId).Single().Name
+        }
+        else
+        {
+            @model.StoreId
+        }
+    </p>
+</div>
 
-<h5>BillArticles</h5>
-
-<button onclick="@( () => Createnn("billarticle"))">Create</button>
-<table>
-	<thead>
-		<tr>
-			<td hidden> Id</td>
-			<td> Name</td>
-            <td> Price</td>
-		</tr>
-	</thead>
-	<tbody>
-	@foreach(var entity in billarticles){
-		<tr>
-			<td  hidden> @entity.Id</td>
-			<td > @entity.Name</td>
-            <td> @entity.Price</td>
-			<td><button onclick="@(e=>nnEdit(entity.Id, "BillArticle"))">Edit</button> |<button onclick="@(e=>nnDelete(entity.Id, "BillArticle"))">Delete</button></td>
-		</tr>
-	}
-	</tbody>
-</table>
-
+<div>
+    <h5>Articles</h5>
+    @if (createOpened)
+    {
+        <BillArticleCreate Id1=@Id Id2="0" Table="bill" />
+        <button class="margin-bottom" onclick="@finishCreate">Finish</button>
+    }
+    else
+    {
+        <button onclick="@( () => Createnn("billarticle"))">Create</button>
+        <table class="table">
+            <thead>
+                <tr>
+                    <td hidden> Id</td>
+                    <td> Name</td>
+                    <td> Price</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var entity in billarticles)
+                {
+                    <tr>
+                        <td hidden> @entity.Id</td>
+                        <td> @entity.Name</td>
+                        <td> @entity.Price</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>Total:</td>
+                    <td>@countTotal()</td>
+                </tr>
+            </tfoot>
+        </table>
+    }
+</div>
 @functions{
-	[Parameter]
-	private string Id {get; set;}
+    [Parameter]
+    private string Id { get; set; }
 
-	Master_v2.Shared.Models.Bill model = new Master_v2.Shared.Models.Bill();
-ICollection<Master_v2.Shared.Models.Article> billarticles = new List<Master_v2.Shared.Models.Article>();
-	protected override async Task OnInitAsync(){
-		model=await Http.GetJsonAsync<Master_v2.Shared.Models.Bill>("/api/bill/"+Id);
-		billarticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Article>>("/api/billarticle/article/"+Id);
-	}
-	void Editnn(int id, string table){
-		uriHelper.NavigateTo("/"+table.ToLower()+"/bill/"+id+"/"+Id);
-	}
-	void Deletenn(int id, string table){
-		uriHelper.NavigateTo("/" + table.ToLower() + "/bill/delete/"+id+"/"+Id);
-	}
-	void nnEdit(int id, string table){
-		uriHelper.NavigateTo("/"+table.ToLower()+"/bill/"+Id+"/"+id);
-	}
-	void nnDelete(int id, string table){
-		uriHelper.NavigateTo("/" + table.ToLower() + "/bill/delete/"+Id+"/"+id);
-	}
-	void Createnn(string nnTable){
-		uriHelper.NavigateTo("/"+nnTable+"/bill/"+Id+"/0");
-	}
-	void nnCreate(string nnTable){
-		uriHelper.NavigateTo("/"+nnTable+"/bill/0/"+Id);
-	}
+    Master_v2.Shared.Models.Bill model = new Master_v2.Shared.Models.Bill();
+    ICollection<Master_v2.Shared.Models.Article> billarticles = new List<Master_v2.Shared.Models.Article>();
+    List<Master_v2.Shared.Models.Person> persons = new List<Master_v2.Shared.Models.Person>();
+    List<Master_v2.Shared.Models.Store> stores = new List<Master_v2.Shared.Models.Store>();
+
+    bool createOpened;
+
+    protected override async Task OnInitAsync()
+    {
+        model = await Http.GetJsonAsync<Master_v2.Shared.Models.Bill>("/api/bill/" + Id);
+        billarticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Article>>("/api/billarticle/article/" + Id);
+        persons = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Person>>("/api/Persons");
+        stores = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Store>>("/api/Stores");
+        createOpened = false;
+    }
+    void nnEdit(int id, string table)
+    {
+        uriHelper.NavigateTo("/" + table.ToLower() + "/bill/" + Id + "/" + id);
+    }
+    void nnDelete(int id, string table)
+    {
+        uriHelper.NavigateTo("/" + table.ToLower() + "/bill/delete/" + Id + "/" + id);
+    }
+    void Createnn(string nnTable)
+    {
+        createOpened = true;
+    }
+    async void finishCreate()
+    {
+        billarticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Article>>("/api/billarticle/article/" + Id);
+        createOpened = false;
+    }
+    double countTotal()
+    {
+        return billarticles.Sum(x=>x.Price);
+    }
 }

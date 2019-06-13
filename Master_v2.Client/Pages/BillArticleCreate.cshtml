@@ -5,74 +5,112 @@
 
 <h6>@message</h6>
 <form onsubmit="@Post">
-<table>
-	<tbody>
-		<tr>
-			<td>
-				<input type="number" bind="@model.Id" asp-for="Id" hidden/>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<label>BillId</label>
-				<select bind="@model.BillId">
-					<option value="">Choose value</option>
-					@foreach(var option in optionsbillid){
-						<option value="@option.Key">@option.Value</option>
-					}
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<label>ArticleId</label>
-				<select bind="@model.ArticleId">
-					<option value="">Choose value</option>
-					@foreach(var option in optionsarticleid){
-						<option value="@option.Key">@option.Value</option>
-					}
-				</select>
-			</td>
-		</tr>
-	</tbody>
-</table>
-	<button type="submit" class="btn btn - success">Save</button>
+    <input type="number" bind="@model.Id" asp-for="Id" hidden />
+    <label>BillId</label>
+    <select bind="@model.BillId">
+        <option value="">Choose value</option>
+        @foreach (var option in optionsbillid)
+        {
+            <option value="@option.Key">@option.Value</option>
+        }
+    </select>
+    <label>ArticleId</label>
+    <select bind="@model.ArticleId">
+        <option value="">Choose value</option>
+        @foreach (var option in optionsarticleid)
+        {
+            <option value="@option.Key">@option.Value</option>
+        }
+    </select>
+    <button type="submit" class="btn btn - success">Save</button>
 </form>
 
-@functions{
-	[Parameter]
-	private string Id1 {get; set;} 
-	[Parameter]
-	private string Id2 {get; set;}
-	[Parameter]
-	private string Table{get; set;}
+<h5>Articles</h5>
+<table class="table">
+    <thead>
+        <tr>
+            <td hidden> Id</td>
+            <td> Name</td>
+            <td> Price</td>
+            <td> Actions</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var entity in billarticles)
+        {
+            <tr>
+                <td hidden> @entity.Id</td>
+                <td> @entity.Name</td>
+                <td> @entity.Price</td>
+                <td><button onclick="@(e=>nnDelete(entity.Id))">Delete</button></td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td>Total:</td>
+            <td>@countTotal()</td>
+            <td></td>
+        </tr>
+    </tfoot>
+</table>
 
-	Master_v2.Shared.Models.BillArticle model = new Master_v2.Shared.Models.BillArticle();
-	List<Master_v2.Shared.Models.SelectListItem> optionsbillid = new List<Master_v2.Shared.Models.SelectListItem>();
-	List<Master_v2.Shared.Models.SelectListItem> optionsarticleid = new List<Master_v2.Shared.Models.SelectListItem>();
-	string message = "";
-	protected override async Task OnInitAsync(){
-		model=await Http.GetJsonAsync<Master_v2.Shared.Models.BillArticle>("/api/billarticle/"+Id1+"/"+Id2);
-		optionsbillid = await Http.GetJsonAsync<List<Master_v2.Shared.Models.SelectListItem>>("/api/billarticles/billdate");
-		optionsarticleid = await Http.GetJsonAsync<List<Master_v2.Shared.Models.SelectListItem>>("/api/billarticles/articlename");
-	}
-	public async Task Post(){
-		try{
-			if(model.BillId == 0 ||model.ArticleId == 0 ){
-				message="Please, fill all fields";
-			}
-			else if(model.Id==0){
-				await Http.SendJsonAsync(HttpMethod.Post, "/api/billarticle/create", model);
-				uriHelper.NavigateTo("/"+Table+"s");
-			}
-			else{
-				await Http.SendJsonAsync(HttpMethod.Post, "/api/billarticle/edit",model);
-			uriHelper.NavigateTo("/"+Table+"s");
-			}
-		}
-		catch(Exception e){
-			Console.WriteLine(e.Message);
-			throw;
-		}
-	}
+@functions{
+    [Parameter]
+    private string Id1 { get; set; }
+    [Parameter]
+    private string Id2 { get; set; }
+    [Parameter]
+    private string Table { get; set; }
+
+    Master_v2.Shared.Models.BillArticle model = new Master_v2.Shared.Models.BillArticle();
+    List<Master_v2.Shared.Models.SelectListItem> optionsbillid = new List<Master_v2.Shared.Models.SelectListItem>();
+    List<Master_v2.Shared.Models.SelectListItem> optionsarticleid = new List<Master_v2.Shared.Models.SelectListItem>();
+    ICollection<Master_v2.Shared.Models.Article> billarticles = new List<Master_v2.Shared.Models.Article>();
+    string message = "";
+
+    protected override async Task OnInitAsync()
+    {
+        model = await Http.GetJsonAsync<Master_v2.Shared.Models.BillArticle>("/api/billarticle/" + Id1 + "/" + Id2);
+        billarticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Article>>("/api/billarticle/article/" + Id1);
+        optionsbillid = await Http.GetJsonAsync<List<Master_v2.Shared.Models.SelectListItem>>("/api/billarticles/billdate");
+        optionsarticleid = await Http.GetJsonAsync<List<Master_v2.Shared.Models.SelectListItem>>("/api/billarticles/articlename");
+    }
+    public async Task Post()
+    {
+        try
+        {
+            if (model.BillId == 0 || model.ArticleId == 0)
+            {
+                message = "Please, fill all fields";
+            }
+            else if (model.Id == 0)
+            {
+                await Http.SendJsonAsync(HttpMethod.Post, "/api/billarticle/create", model);
+                billarticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Article>>("/api/billarticle/article/" + Id1);
+            }
+            else
+            {
+                await Http.SendJsonAsync(HttpMethod.Post, "/api/billarticle/edit", model);
+                billarticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Article>>("/api/billarticle/article/" + Id1);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            throw;
+        }
+    }
+
+
+    async void nnDelete(int id)
+    {
+        await Http.DeleteAsync("/api/billarticle/delete/" + Id1 + "/" + id);
+        billarticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Article>>("/api/billarticle/article/" + Id1);
+    }
+
+    double countTotal()
+    {
+        return billarticles.Sum(x => x.Price);
+    }
 }
