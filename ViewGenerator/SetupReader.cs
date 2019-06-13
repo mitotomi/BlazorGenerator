@@ -53,10 +53,20 @@ namespace ViewGenerator
                 {
                     var tableModel = new TableModel();
                     tableModel.dbTable = table.Key;
+
                     foreach (var attr in JObject.Parse(table.Value.ToString()))
                     {
+                        //so generator could generate authorization
+                        if (attr.Key == "read")
+                        {
+                            tableModel.readPermissions = attr.Value.ToObject<int[]>();
+                        }
+                        else if (attr.Key == "write")
+                        {
+                            tableModel.writePermissions = attr.Value.ToObject<int[]>();
+                        }
                         //get children
-                        if (attr.Key == "children")
+                        else if (attr.Key == "children")
                         {
                             foreach (var childTable in JObject.Parse(attr.Value.ToString()))
                             {
