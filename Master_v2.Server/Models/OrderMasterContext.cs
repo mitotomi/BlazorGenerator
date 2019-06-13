@@ -20,6 +20,7 @@ namespace Master_v2.Server.Models
         public virtual DbSet<Bill> Bill { get; set; }
         public virtual DbSet<BillArticle> BillArticle { get; set; }
         public virtual DbSet<Person> Person { get; set; }
+        public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<Store> Store { get; set; }
         public virtual DbSet<StoreArticle> StoreArticle { get; set; }
 
@@ -96,6 +97,27 @@ namespace Master_v2.Server.Models
                     .IsRequired()
                     .HasColumnName("OIB")
                     .HasMaxLength(11);
+
+                entity.Property(e => e.Password)
+                    .IsRequired()
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.UserName)
+                    .IsRequired()
+                    .HasMaxLength(10);
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.Person)
+                    .HasForeignKey(d => d.RoleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Person_Role");
+            });
+
+            modelBuilder.Entity<Role>(entity =>
+            {
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(30);
             });
 
             modelBuilder.Entity<Store>(entity =>
