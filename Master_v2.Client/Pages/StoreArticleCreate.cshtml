@@ -63,6 +63,7 @@
     string message = "";
     protected override async Task OnInitAsync()
     {
+        if (!AuthorizationStore.checkWritePermissions("store")) uriHelper.NavigateTo("/");
         model = await Http.GetJsonAsync<Master_v2.Shared.Models.StoreArticle>("/api/storearticle/" + Id1 + "/" + Id2);
         optionsstoreid = await Http.GetJsonAsync<List<Master_v2.Shared.Models.SelectListItem>>("/api/storearticles/storename");
         optionsarticleid = await Http.GetJsonAsync<List<Master_v2.Shared.Models.SelectListItem>>("/api/storearticles/articlename");
@@ -93,7 +94,7 @@
             throw;
         }
     }
-    
+
     public async Task nnDelete(int id)
     {
         await Http.DeleteAsync("/api/storearticle/delete/" + Id1 + "/" + id);

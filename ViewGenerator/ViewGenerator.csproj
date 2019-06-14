@@ -8,6 +8,7 @@
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="DataAccess\" />
+    <Folder Include="Authorization\" />
     <Folder Include="Services\" />
     <Folder Include="Views\" />
   </ItemGroup>

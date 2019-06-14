@@ -59,19 +59,20 @@
 </table>
 
 @functions{
-	[Parameter]
-	private string Id {get; set;}
+    [Parameter]
+    private string Id {get; set;}
 
-	Master_v2.Shared.Models.Person model = new Master_v2.Shared.Models.Person();
-	protected override async Task OnInitAsync(){
-		model=await Http.GetJsonAsync<Master_v2.Shared.Models.Person>("/api/person/"+Id);
-		model.Store = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Store>>("/api/person/store/"+Id);
-		model.Bill = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Bill>>("/api/person/bill/"+Id);
-	}
-	void Edit(int id, string table){
-		uriHelper.NavigateTo("/"+table.ToLower()+"/"+id);
-	}
-	void Delete(int id, string table){
-		uriHelper.NavigateTo("/" + table.ToLower() + "/delete/"+id);
-	}
+    Master_v2.Shared.Models.Person model = new Master_v2.Shared.Models.Person();
+    protected override async Task OnInitAsync(){
+        if (!AuthorizationStore.checkReadPermission("person")) uriHelper.NavigateTo("/");
+        model = await Http.GetJsonAsync<Master_v2.Shared.Models.Person>("/api/person/"+Id);
+        model.Store = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Store>>("/api/person/store/"+Id);
+        model.Bill = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Bill>>("/api/person/bill/"+Id);
+    }
+    void Edit(int id, string table){
+        uriHelper.NavigateTo("/"+table.ToLower()+"/"+id);
+    }
+    void Delete(int id, string table){
+        uriHelper.NavigateTo("/" + table.ToLower() + "/delete/"+id);
+    }
 }

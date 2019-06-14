@@ -46,35 +46,36 @@
 </form>
 
 @functions{
-	[Parameter]
-	private string Id {get; set;}
+    [Parameter]
+    private string Id {get; set;}
 
-	Master_v2.Shared.Models.Bill model = new Master_v2.Shared.Models.Bill();
-	List<Master_v2.Shared.Models.SelectListItem> optionspersonid = new List<Master_v2.Shared.Models.SelectListItem>();
-	List<Master_v2.Shared.Models.SelectListItem> optionsstoreid = new List<Master_v2.Shared.Models.SelectListItem>();
-	string message = "";
-	protected override async Task OnInitAsync(){
-		model=await Http.GetJsonAsync<Master_v2.Shared.Models.Bill>("/api/bill/"+Id);
-		optionspersonid = await Http.GetJsonAsync<List<Master_v2.Shared.Models.SelectListItem>>("/api/bills/personlastname");
-		optionsstoreid = await Http.GetJsonAsync<List<Master_v2.Shared.Models.SelectListItem>>("/api/bills/storename");
-	}
-	public async Task Post(){
-		try{
-			if(model.PersonId == 0 ||model.StoreId == 0 ){
-				message="Please, fill all fields";
-			}
-			else if(model.Id==0){
-				await Http.SendJsonAsync(HttpMethod.Post, "/api/bill/create", model);
-				uriHelper.NavigateTo("/bills");
-			}
-			else{
-				await Http.SendJsonAsync(HttpMethod.Post, "/api/bill/edit",model);
-			uriHelper.NavigateTo("/bills");
-			}
-		}
-		catch(Exception e){
-			Console.WriteLine(e.Message);
-			throw;
-		}
-	}
+    Master_v2.Shared.Models.Bill model = new Master_v2.Shared.Models.Bill();
+    List<Master_v2.Shared.Models.SelectListItem> optionspersonid = new List<Master_v2.Shared.Models.SelectListItem>();
+    List<Master_v2.Shared.Models.SelectListItem> optionsstoreid = new List<Master_v2.Shared.Models.SelectListItem>();
+    string message = "";
+    protected override async Task OnInitAsync(){
+        if (!AuthorizationStore.checkWritePermissions("bill")) uriHelper.NavigateTo("/");
+        model = await Http.GetJsonAsync<Master_v2.Shared.Models.Bill>("/api/bill/"+Id);
+        optionspersonid = await Http.GetJsonAsync<List<Master_v2.Shared.Models.SelectListItem>>("/api/bills/personlastname");
+        optionsstoreid = await Http.GetJsonAsync<List<Master_v2.Shared.Models.SelectListItem>>("/api/bills/storename");
+    }
+    public async Task Post(){
+        try{
+            if(model.PersonId == 0 ||model.StoreId == 0 ){
+                message="Please, fill all fields";
+            }
+            else if(model.Id==0){
+                await Http.SendJsonAsync(HttpMethod.Post, "/api/bill/create", model);
+                uriHelper.NavigateTo("/bills");
+            }
+            else{
+                await Http.SendJsonAsync(HttpMethod.Post, "/api/bill/edit",model);
+                uriHelper.NavigateTo("/bills");
+            }
+        }
+        catch(Exception e){
+            Console.WriteLine(e.Message);
+            throw;
+        }
+    }
 }

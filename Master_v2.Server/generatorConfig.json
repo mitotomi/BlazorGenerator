@@ -1,7 +1,8 @@
 {
+  "validation": true,
   "Person": {
     "read": [ 2, 1 ],
-    "write": [1],
+    "write": [ 1 ],
     "id": {
       "name": "Id",
       "hidden": true,
@@ -95,8 +96,8 @@
     }
   },
   "Store": {
-    "read": [1,2],
-    "write": [1,2],
+    "read": [ 1, 2 ],
+    "write": [ 1, 2 ],
     "id": {
       "name": "Id",
       "hidden": true,
@@ -171,8 +172,8 @@
     }
   },
   "Bill": {
-    "read": [1,2],
-    "write": [1],
+    "read": [ 1, 2 ],
+    "write": [ 1 ],
     "id": {
       "name": "Id",
       "hidden": true,
@@ -211,8 +212,8 @@
     }
   },
   "Article": {
-    "read": [1],
-    "write": [1],
+    "read": [ 1 ],
+    "write": [ 1 ],
     "id": {
       "name": "Id",
       "hidden": true,

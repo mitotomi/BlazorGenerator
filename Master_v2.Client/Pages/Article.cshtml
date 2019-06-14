@@ -41,6 +41,7 @@
     ICollection<Master_v2.Shared.Models.Bill> billarticles = new List<Master_v2.Shared.Models.Bill>();
     protected override async Task OnInitAsync()
     {
+        if (!AuthorizationStore.checkReadPermission("article")) uriHelper.NavigateTo("/");
         model = await Http.GetJsonAsync<Master_v2.Shared.Models.Article>("/api/article/" + Id);
         billarticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Bill>>("/api/billarticle/bill/" + Id);
     }

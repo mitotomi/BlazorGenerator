@@ -91,6 +91,7 @@
 
     protected override async Task OnInitAsync()
     {
+        if (!AuthorizationStore.checkReadPermission("store")) uriHelper.NavigateTo("/");
         persons = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Person>>("/api/Persons");
         model = await Http.GetJsonAsync<Master_v2.Shared.Models.Store>("/api/store/" + Id);
         model.Bill = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Bill>>("/api/store/bill/" + Id);

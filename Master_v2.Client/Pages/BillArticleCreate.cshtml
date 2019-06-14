@@ -71,6 +71,7 @@
 
     protected override async Task OnInitAsync()
     {
+        if (!AuthorizationStore.checkWritePermissions("bill")) uriHelper.NavigateTo("/");
         model = await Http.GetJsonAsync<Master_v2.Shared.Models.BillArticle>("/api/billarticle/" + Id1 + "/" + Id2);
         billarticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Article>>("/api/billarticle/article/" + Id1);
         optionsbillid = await Http.GetJsonAsync<List<Master_v2.Shared.Models.SelectListItem>>("/api/billarticles/billdate");

@@ -26,7 +26,11 @@ namespace ViewGenerator
             var tableCollection = new TableModelCollection();
             foreach (var table in jObject)
             {
-                if (table.Key == "n-n")
+                if (table.Key == "validation")
+                {
+                    tableCollection.validation = table.Value.ToObject<bool>();
+                }
+                else if (table.Key == "n-n")
                 {
                     foreach(var obj in JObject.Parse(table.Value.ToString()))
                     {

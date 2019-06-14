@@ -407,7 +407,7 @@ namespace ViewGenerator.Generator
                         w.WriteLine("@functions{\n\n");
                         w.WriteLine("\tList<" + projectName + ".Shared.Models." + table.dbTable + "> models;");
                         w.WriteLine("\tprotected override async Task OnInitAsync()\n\t{ ");
-                        w.WriteLine("\t\tmodels=await Http.GetJsonAsync<List<" + projectName + ".Shared.Models." + table.dbTable + ">>(\"/api/" + table.dbTable + "s\");");
+                        w.WriteLine("\t\tmodels=await Http.GetJsonAsync<List<" + projectName + ".Shared.Models." + table.dbTable + ">>(\"/api/" + table.dbTable.ToLower() + "s\");");
                         w.WriteLine("\t}");
                         w.WriteLine("\tvoid Create(){\n\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "/0\");\n\t}");
                         w.WriteLine("\tvoid Edit(int id){\n\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "/\"+id);\n\t}");
