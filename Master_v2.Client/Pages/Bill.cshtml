@@ -5,6 +5,8 @@
     put routes for page on top with @page /{wishedRoute}
 *@
 
+<button class="margin-bottom" onclick="@Back">Back</button>
+
 <div class="border-bottom">
     <p hidden><span> Id</span> @model.Id</p>
     <p>
@@ -36,12 +38,12 @@
     <h5>Articles</h5>
     @if (createOpened)
     {
+        <button class="margin-bottom" onclick="@finishCreate">Back</button>
         <BillArticleCreate Id1=@Id Id2="0" Table="bill" />
-        <button class="margin-bottom" onclick="@finishCreate">Finish</button>
     }
     else
     {
-        <button onclick="@( () => Createnn("billarticle"))">Create</button>
+        <button onclick="@( () => Createnn("billarticle"))">Edit</button>
         <table class="table">
             <thead>
                 <tr>
@@ -89,6 +91,10 @@
         stores = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Store>>("/api/Stores");
         createOpened = false;
     }
+    void Back()
+    {
+        uriHelper.NavigateTo("/bills");
+    }
     void nnEdit(int id, string table)
     {
         uriHelper.NavigateTo("/" + table.ToLower() + "/bill/" + Id + "/" + id);
@@ -108,6 +114,6 @@
     }
     double countTotal()
     {
-        return billarticles.Sum(x=>x.Price);
+        return billarticles.Sum(x => x.Price);
     }
 }

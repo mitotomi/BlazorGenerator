@@ -22,6 +22,7 @@ namespace ViewGenerator.Generator
                         w.WriteLine("@inject HttpClient Http\n@inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper");
                         w.WriteLine("@*\n\tput routes for page on top with @page /{wishedRoute}\n*@");
                         w.WriteLine();
+                        w.WriteLine("<button class=\"margin - bottom\" onclick=\"@Back\">Back</button>");
                         foreach (var attr in table.atributes)
                         {
                             w.WriteLine("<p " + (attr.hidden ? "hidden" : "") + "><span> " + attr.name + "</span> @model." + attr.name + "</p>");
@@ -139,6 +140,7 @@ namespace ViewGenerator.Generator
                             w.WriteLine("\t\t" + relationModel.nnTable.ToLower() + "s = await Http.GetJsonAsync<List<" + projectName + ".Shared.Models." + otherTable + ">>(\"/api/" + nnRelationTable.ToLower() + "/" + otherTable.ToLower() + "/\"+Id);");
                         }
                         w.WriteLine("\t}");
+                        w.WriteLine("\tvoid Back()\n\t{\n\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "s\");\n\t}");
                         if (table.children.Count > 0)
                         {
                             w.WriteLine("\tvoid Edit(int id, string table){\n\t\turiHelper.NavigateTo(\"/\"+table.ToLower()+\"/\"+id);\n\t}");
@@ -418,7 +420,7 @@ namespace ViewGenerator.Generator
                         }
                         if (model.authorization)
                         {
-                            w.WriteLine("\t\t\t@if(AuthorizationStore.checkWritePermissions(\""+table.dbTable.ToLower()+"\")\n\t\t\t{");
+                            w.WriteLine("\t\t\t@if(AuthorizationStore.checkWritePermissions(\"" + table.dbTable.ToLower() + "\")\n\t\t\t{");
                             w.WriteLine("\t\t\t\t<td><button onclick=\"@(e=>Edit(entity.Id))\">Edit</button> |<button onclick=\"@(e=>Delete(entity.Id))\">Delete</button></td>");
                             w.WriteLine("\t\t\t}");
                         }

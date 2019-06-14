@@ -5,6 +5,8 @@
     put routes for page on top with @page /{wishedRoute}
 *@
 
+<button class="margin-bottom" onclick="@Back">Back</button>
+
 <p hidden><span> Id</span> @model.Id</p>
 <p><span> Name</span> @model.Name</p>
 <p><span> LastName</span> @model.LastName</p>
@@ -72,6 +74,10 @@
         model = await Http.GetJsonAsync<Master_v2.Shared.Models.Person>("/api/person/" + Id);
         model.Store = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Store>>("/api/person/store/" + Id);
         model.Bill = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Bill>>("/api/person/bill/" + Id);
+    }
+    void Back()
+    {
+        uriHelper.NavigateTo("/persons");
     }
     void Edit(int id, string table)
     {
