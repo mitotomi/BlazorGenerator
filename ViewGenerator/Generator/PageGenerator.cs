@@ -118,7 +118,12 @@ namespace ViewGenerator.Generator
                             w.WriteLine("ICollection<" + projectName + ".Shared.Models." + otherTable + "> " + relationModel.nnTable.ToLower() + "s = new List<" + projectName + ".Shared.Models." + otherTable + ">();");
                         }
 
-                        w.WriteLine("\tprotected override async Task OnInitAsync(){\n\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + table.dbTable + ">(\"/api/" + table.dbTable.ToLower() + "/\"+Id);");
+                        w.WriteLine("\tprotected override async Task OnInitAsync(){");
+                        if (model.authorization)
+                        {
+                            w.WriteLine("\t\tif (!AuthorizationStore.checkReadPermission(\"" + table.dbTable.ToLower() + "\")) uriHelper.NavigateTo(\" / \");");
+                        }
+                        w.WriteLine("\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + table.dbTable + ">(\"/api/" + table.dbTable.ToLower() + "/\"+Id);");
                         foreach (var child in table.children)
                         {
                             w.WriteLine("\t\tmodel." + child.dbTable + " = await Http.GetJsonAsync<List<" + projectName + ".Shared.Models." + child.dbTable + ">>(\"/api/" + table.dbTable.ToLower() + "/" + child.dbTable.ToLower() + "/\"+Id);");
@@ -253,7 +258,12 @@ namespace ViewGenerator.Generator
                             w.WriteLine("\tList<" + projectName + ".Shared.Models.SelectListItem> options" + attr.name.ToLower() + " = new List<" + projectName + ".Shared.Models.SelectListItem>();");
                         }
                         w.WriteLine("\tstring message = \"\";");
-                        w.WriteLine("\tprotected override async Task OnInitAsync(){\n\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + table.dbTable + ">(\"/api/" + table.dbTable.ToLower() + "/\"+Id);");
+                        w.WriteLine("\tprotected override async Task OnInitAsync(){");
+                        if (model.authorization)
+                        {
+                            w.WriteLine("\t\tif (!AuthorizationStore.checkReadPermission(\"" + table.dbTable.ToLower() + "\")) uriHelper.NavigateTo(\" / \");");
+                        }
+                        w.WriteLine("\t\tmodel=await Http.GetJsonAsync<" + projectName + ".Shared.Models." + table.dbTable + ">(\"/api/" + table.dbTable.ToLower() + "/\"+Id);");
                         foreach (var attr in table.atributes.Where(x => x.foreignKey == true))
                         {
                             w.WriteLine("\t\toptions" + attr.name.ToLower() + " = await Http.GetJsonAsync<List<" + projectName + ".Shared.Models.SelectListItem>>(\"/api/" + table.dbTable.ToLower() + "s/" + attr.fkTable.ToLower() + attr.fkValue.ToLower() + "\");");
@@ -373,7 +383,15 @@ namespace ViewGenerator.Generator
                         w.WriteLine("@inject HttpClient Http\n@inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper");
                         w.WriteLine();
                         w.WriteLine("@if (models==null) { \n\t <p><em>Loading...</em></p> \n}\n else {");
-                        w.WriteLine("\t<button onclick=\"@Create\">Create</button>");
+                        if (model.authorization)
+                        {
+                            w.WriteLine("\t@if(AuthorizationStore.checkWritePermissions(\"" + table.dbTable.ToLower() + "\")){");
+                            w.WriteLine("\t\t<button onclick=\"@Create\">Create</button>\n\t}");
+                        }
+                        else
+                        {
+                            w.WriteLine("\t<button onclick=\"@Create\">Create</button>");
+                        }
                         w.WriteLine("<table class=\"table\">");
                         w.WriteLine("\t<thead>");
                         w.WriteLine("\t\t<tr>");
@@ -407,6 +425,10 @@ namespace ViewGenerator.Generator
                         w.WriteLine("@functions{\n\n");
                         w.WriteLine("\tList<" + projectName + ".Shared.Models." + table.dbTable + "> models;");
                         w.WriteLine("\tprotected override async Task OnInitAsync()\n\t{ ");
+                        if (model.authorization)
+                        {
+                            w.WriteLine("\t\tif (!AuthorizationStore.checkReadPermission(\"" + table.dbTable.ToLower() + "\")) uriHelper.NavigateTo(\" / \");");
+                        }
                         w.WriteLine("\t\tmodels=await Http.GetJsonAsync<List<" + projectName + ".Shared.Models." + table.dbTable + ">>(\"/api/" + table.dbTable.ToLower() + "s\");");
                         w.WriteLine("\t}");
                         w.WriteLine("\tvoid Create(){\n\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "/0\");\n\t}");

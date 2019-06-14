@@ -26,6 +26,10 @@ namespace ViewGenerator.Generator
                         //get all
                         w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + table.dbTable.ToLower() + "s\")]");
                         w.WriteLine("\t\tpublic IEnumerable<" + table.dbTable + "> Get(){");
+                        if (model.authorization)
+                        {
+                            w.WriteLine();
+                        }
                         w.WriteLine("\t\t\treturn _repository.GetAll();\n\t\t}\n");
                         //get by id
                         w.WriteLine("\t\t[HttpGet]\n\t\t[Route(\"api/" + table.dbTable.ToLower() + "/{id}\")]");

@@ -13,7 +13,7 @@ namespace ViewGenerator
             string projectName = "Master_v2";
 
             var model = SetupReader.ReadData(jsonPath);
-            if (model.validation)
+            if (model.authorization)
             {
                 AuthorizationGenerator.generateAuthorization(model,destPath+"Authorization", projectName);
             }

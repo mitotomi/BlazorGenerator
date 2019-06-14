@@ -28,7 +28,7 @@ namespace ViewGenerator
             {
                 if (table.Key == "validation")
                 {
-                    tableCollection.validation = table.Value.ToObject<bool>();
+                    tableCollection.authorization = table.Value.ToObject<bool>();
                 }
                 else if (table.Key == "n-n")
                 {

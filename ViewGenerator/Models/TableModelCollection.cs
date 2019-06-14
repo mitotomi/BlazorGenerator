@@ -8,11 +8,11 @@ namespace ViewGenerator.Models
     {
         public List<TableModel> tableModels { get; set; }
         public List<NNModel> nnRelations { get; set; }
-        public bool validation { get; set; }
+        public bool authorization { get; set; }
 
         public TableModelCollection()
         {
-            validation = false;
+            authorization = false;
             tableModels = new List<TableModel>();
             nnRelations = new List<NNModel>();
         }
