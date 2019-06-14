@@ -39,7 +39,10 @@ else
                     <td> @entity.BirthDate</td>
                     <td> @entity.Gender</td>
                     <td> @entity.IsActive</td>
-                    <td><button onclick="@(e=>Edit(entity.Id))">Edit</button> |<button onclick="@(e=>Delete(entity.Id))">Delete</button></td>
+                    @if (AuthorizationStore.checkWritePermissions("person"))
+                    {
+                        <td><button onclick="@(e => Edit(entity.Id))">Edit</button> |<button onclick="@(e => Delete(entity.Id))">Delete</button></td>
+                    }
                 </tr>
             }
         </tbody>

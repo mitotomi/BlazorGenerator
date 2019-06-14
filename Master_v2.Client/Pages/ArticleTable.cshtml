@@ -29,15 +29,16 @@ else
                     <td hidden> @entity.Id</td>
                     <td><a href="/articles/@entity.Id"> @entity.Name</a></td>
                     <td> @entity.Price</td>
-                    <td><button onclick="@(e=>Edit(entity.Id))">Edit</button> |<button onclick="@(e=>Delete(entity.Id))">Delete</button></td>
+                    @if (AuthorizationStore.checkWritePermissions("article"))
+                    {
+                        <td><button onclick="@(e => Edit(entity.Id))">Edit</button> |<button onclick="@(e => Delete(entity.Id))">Delete</button></td>
+                    }
                 </tr>
             }
         </tbody>
     </table>
 }
 @functions{
-
-
     List<Master_v2.Shared.Models.Article> models;
     protected override async Task OnInitAsync()
     {

@@ -31,7 +31,10 @@ else
                     <td><a href="/stores/@entity.Id"> @entity.Name</a></td>
                     <td> @entity.Address</td>
                     <td> @entity.OwnerId</td>
-                    <td><button onclick="@(e=>Edit(entity.Id))">Edit</button> |<button onclick="@(e=>Delete(entity.Id))">Delete</button></td>
+                    @if (AuthorizationStore.checkWritePermissions("store"))
+                    {
+                        <td><button onclick="@(e => Edit(entity.Id))">Edit</button> |<button onclick="@(e => Delete(entity.Id))">Delete</button></td>
+                    }
                 </tr>
             }
         </tbody>
