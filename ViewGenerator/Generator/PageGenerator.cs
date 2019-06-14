@@ -22,7 +22,7 @@ namespace ViewGenerator.Generator
                         w.WriteLine("@inject HttpClient Http\n@inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper");
                         w.WriteLine("@*\n\tput routes for page on top with @page /{wishedRoute}\n*@");
                         w.WriteLine();
-                        w.WriteLine("<button class=\"margin - bottom\" onclick=\"@Back\">Back</button>");
+                        w.WriteLine("<button onclick=\"@Back\">Back</button>");
                         foreach (var attr in table.atributes)
                         {
                             w.WriteLine("<p " + (attr.hidden ? "hidden" : "") + "><span> " + attr.name + "</span> @model." + attr.name + "</p>");
@@ -175,11 +175,13 @@ namespace ViewGenerator.Generator
                     {
                         w.WriteLine("@page \"/" + table.dbTable.ToLower() + "/delete/{id}\"");
                         w.WriteLine("@inject HttpClient Http\n@inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper");
+                        w.WriteLine("<button onclick=\"@Back\">Back</button>");
                         w.WriteLine("<h1>Delete " + table.dbTable + "</h1>\n");
                         w.WriteLine("Are you sure you want to delete this entity");
                         w.WriteLine("\t\t\t<td><button onclick=\"@Yes\">Yes</button> |<button onclick=\"@No\">No</button></td>");
                         w.WriteLine("@functions{");
                         w.WriteLine("\t[Parameter]\n\tprivate string Id {get; set;}");
+                        w.WriteLine("\tvoid Back()\n\t{\n\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "s\");\n\t}");
                         w.WriteLine("\tpublic async Task Yes(){\n\t\tawait Http.DeleteAsync(\"/api/" + table.dbTable.ToLower() + "/delete/\"+Id);" +
                             "\n\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "s\");\n\t}");
                         w.WriteLine("\tpublic void No(){\n\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "s\");\n\t}");
@@ -222,6 +224,7 @@ namespace ViewGenerator.Generator
                     {
                         w.WriteLine("@page \"/" + table.dbTable.ToLower() + "/{id}\"");
                         w.WriteLine("@inject HttpClient Http\n@inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper");
+                        w.WriteLine("<button onclick=\"@Back\">Back</button>");
                         w.WriteLine("<h1>Edit " + table.dbTable + "</h1>\n");
                         if (table.atributes.Where(x => x.foreignKey == true).Count() > 0)
                         {
@@ -271,6 +274,7 @@ namespace ViewGenerator.Generator
                             w.WriteLine("\t\toptions" + attr.name.ToLower() + " = await Http.GetJsonAsync<List<" + projectName + ".Shared.Models.SelectListItem>>(\"/api/" + table.dbTable.ToLower() + "s/" + attr.fkTable.ToLower() + attr.fkValue.ToLower() + "\");");
                         }
                         w.WriteLine("\t}");
+                        w.WriteLine("\tvoid Back()\n\t{\n\t\turiHelper.NavigateTo(\"/" + table.dbTable.ToLower() + "s\");\n\t}");
                         if (table.atributes.Any(x => x.foreignKey == true))
                         {
                             string condition = "";
