@@ -424,7 +424,7 @@ namespace ViewGenerator.Generator
                         }
                         if (model.authorization)
                         {
-                            w.WriteLine("\t\t\t@if(AuthorizationStore.checkWritePermissions(\"" + table.dbTable.ToLower() + "\")\n\t\t\t{");
+                            w.WriteLine("\t\t\t@if(AuthorizationStore.checkWritePermissions(\"" + table.dbTable.ToLower() + "\"))\n\t\t\t{");
                             w.WriteLine("\t\t\t\t<td><button onclick=\"@(e=>Edit(entity.Id))\">Edit</button> |<button onclick=\"@(e=>Delete(entity.Id))\">Delete</button></td>");
                             w.WriteLine("\t\t\t}");
                         }

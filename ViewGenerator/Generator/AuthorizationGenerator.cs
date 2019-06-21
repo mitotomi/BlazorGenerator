@@ -96,7 +96,7 @@ namespace ViewGenerator.Generator
                     w.WriteLine("<h5> @message </h5>\n\n<div> ");
                     w.WriteLine("\t<label> UserName </label>\n\t<input type=\"text\" bind=\"@UserName\" asp-for=\"username\" />");
                     w.WriteLine("\t<label> Password </label>\n\t<input type=\"password\" bind=\"@Password\" asp-for=\"password\" />");
-                    w.WriteLine("\t<button onclick=\"LogIn\">Log in </button>\n</div>");
+                    w.WriteLine("\t<button onclick=\"@LogIn\">Log in </button>\n</div>");
                     w.WriteLine("\n@functions{");
                     w.WriteLine("\tpublic string UserName {get; set;}\n\tpublic string Password{get; set;}\n\tpublic string message = \"\";");
                     w.WriteLine("\tpublic async Task LogIn()\n\t{");
