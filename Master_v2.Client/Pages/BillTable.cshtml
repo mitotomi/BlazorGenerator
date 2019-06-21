@@ -3,63 +3,55 @@
 @inject HttpClient Http
 @inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper
 
-@if (models == null)
-{
-    <p><em>Loading...</em></p>
+@if (models==null) { 
+	 <p><em>Loading...</em></p> 
 }
-else
-{
-    @if (AuthorizationStore.checkWritePermissions("bill"))
-    {
-        <button onclick="@Create">Create</button>
-    }
-    <table class="table">
-        <thead>
-            <tr>
-                <td hidden> Id</td>
-                <td> PersonId</td>
-                <td> Date</td>
-                <td> StoreId</td>
-                <td> Actions</td>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var entity in @models)
-            {
-                <tr>
-                    <td hidden> @entity.Id</td>
-                    <td><a href="/bills/@entity.Id"> @entity.PersonId</a></td>
-                    <td> @entity.Date</td>
-                    <td> @entity.StoreId</td>
-                    @if (AuthorizationStore.checkWritePermissions("bill"))
-                    {
-                        <td><button onclick="@(e => Edit(entity.Id))">Edit</button> |<button onclick="@(e => Delete(entity.Id))">Delete</button></td>
-                    }
-                </tr>
-            }
-        </tbody>
-    </table>
+ else {
+	@if(AuthorizationStore.checkWritePermissions("bill")){
+		<button onclick="@Create">Create</button>
+	}
+<table class="table">
+	<thead>
+		<tr>
+			<td hidden> Id</td>
+			<td> PersonId</td>
+			<td> Date</td>
+			<td> StoreId</td>
+		</tr>
+	</thead>
+	<tbody>
+	@foreach(var entity in @models){
+		<tr>
+			<td  hidden> @entity.Id</td>
+			<td ><a href="/bills/@entity.Id"> @entity.PersonId</a></td>
+			<td > @entity.Date</td>
+			<td > @entity.StoreId</td>
+			@if(AuthorizationStore.checkWritePermissions("bill"))
+			{
+				<td><button onclick="@(e=>Edit(entity.Id))">Edit</button> |<button onclick="@(e=>Delete(entity.Id))">Delete</button></td>
+			}
+		</tr>
+	}
+	</tbody>
+</table>
 }
 @functions{
 
 
-    List<Master_v2.Shared.Models.Bill> models;
-    protected override async Task OnInitAsync()
-    {
-        if (!AuthorizationStore.checkReadPermission("bill")) uriHelper.NavigateTo("/");
-        models = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Bill>>("/api/Bills");
-    }
-    void Create()
-    {
-        uriHelper.NavigateTo("/bill/0");
-    }
-    void Edit(int id)
-    {
-        uriHelper.NavigateTo("/bill/" + id);
-    }
-    void Delete(int id)
-    {
-        uriHelper.NavigateTo("/bill/delete/" + id);
-    }
+	List<Master_v2.Shared.Models.Bill> models;
+	protected override async Task OnInitAsync()
+	{ 
+		if (!AuthorizationStore.checkReadPermission("bill")) uriHelper.NavigateTo(" / ");
+		models=await Http.GetJsonAsync<List<Master_v2.Shared.Models.Bill>>("/api/bills");
+	}
+	void Create(){
+		uriHelper.NavigateTo("/bill/0");
+	}
+	void Edit(int id){
+		uriHelper.NavigateTo("/bill/"+id);
+	}
+	void Delete(int id){
+		uriHelper.NavigateTo("/bill/delete/"+id);
+	}
 
 }

@@ -2,77 +2,67 @@
 @inject HttpClient Http
 @inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper
 @*
-    put routes for page on top with @page /{wishedRoute}
+	put routes for page on top with @page /{wishedRoute}
 *@
 
-<button class="margin-bottom" onclick="@Back">Back</button>
-
+<button onclick="@Back">Back</button>
 <p hidden><span> Id</span> @model.Id</p>
-<p><span> Name</span> @model.Name</p>
-<p><span> Price</span> @model.Price</p>
+<p ><span> Name</span> @model.Name</p>
+
 <h5>BillArticles</h5>
 
-<button onclick="@( () => nnCreate("billarticle"))">Create</button>
-
+<button onClick=@( () => nnCreate("billarticle"))>Create</button>
 <table>
-    <thead>
-        <tr>
-            <td hidden> Id</td>
-            <td> Date</td>
-            <td> PersonId</td>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var entity in billarticles)
-        {
-            <tr>
-                <td hidden> @entity.Id</td>
-                <td> @entity.Date</td>
-                <td> @entity.PersonId</td>
-                <td><button onclick="@(e=>Editnn(entity.Id, "BillArticle" ))">Edit</button> |<button onclick="@(e=>Deletenn(entity.Id, "BillArticle" ))">Delete</button></td>
-            </tr>
-        }
-    </tbody>
+	<thead>
+		<tr>
+			<td hidden> Id</td>
+			<td> Date</td>
+			<td> PersonId</td>
+		</tr>
+	</thead>
+	<tbody>
+	@foreach(var entity in billarticles){
+		<tr>
+			<td  hidden> @entity.Id</td>
+			<td > @entity.Date</td>
+			<td > @entity.PersonId</td>
+			<td><button onclick="@(e=>Editnn(entity.Id, "BillArticle" ))">Edit</button> |<button onclick="@(e=>Deletenn(entity.Id, "BillArticle" ))">Delete</button></td>
+		</tr>
+	}
+	</tbody>
 </table>
 
 @functions{
-    [Parameter]
-    private string Id { get; set; }
+	[Parameter]
+	private string Id {get; set;}
 
-    Master_v2.Shared.Models.Article model = new Master_v2.Shared.Models.Article();
-    ICollection<Master_v2.Shared.Models.Bill> billarticles = new List<Master_v2.Shared.Models.Bill>();
-    protected override async Task OnInitAsync()
-    {
-        if (!AuthorizationStore.checkReadPermission("article")) uriHelper.NavigateTo("/");
-        model = await Http.GetJsonAsync<Master_v2.Shared.Models.Article>("/api/article/" + Id);
-        billarticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Bill>>("/api/billarticle/bill/" + Id);
-    }
-    void Back()
-    {
-        uriHelper.NavigateTo("/articles");
-    }
-    void Editnn(int id, string table)
-    {
-        uriHelper.NavigateTo("/" + table.ToLower() + "/article/" + id + "/" + Id);
-    }
-    void Deletenn(int id, string table)
-    {
-        uriHelper.NavigateTo("/" + table.ToLower() + "/article/delete/" + id + "/" + Id);
-    }
-    void nnEdit(int id, string table)
-    {
-        uriHelper.NavigateTo("/" + table.ToLower() + "/article/" + Id + "/" + id);
-    }
-    void nnDelete(int id, string table)
-    {
-        uriHelper.NavigateTo("/" + table.ToLower() + "/article/delete/" + Id + "/" + id);
-    }
-    void Createnn(string nnTable)
-    {
-        uriHelper.NavigateTo("/" + nnTable + "/article/" + Id + "/0");
-    }
-    void nnCreate(string nnTable)
-    {
-        uriHelper.NavigateTo("/" + nnTable + "/article/0/" + Id);
-    }
+	Master_v2.Shared.Models.Article model = new Master_v2.Shared.Models.Article();
+ICollection<Master_v2.Shared.Models.Bill> billarticles = new List<Master_v2.Shared.Models.Bill>();
+	protected override async Task OnInitAsync(){
+		if (!AuthorizationStore.checkReadPermission("article")) uriHelper.NavigateTo(" / ");
+		model=await Http.GetJsonAsync<Master_v2.Shared.Models.Article>("/api/article/"+Id);
+		billarticles = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Bill>>("/api/billarticle/bill/"+Id);
+	}
+	void Back()
+	{
+		uriHelper.NavigateTo("/articles");
+	}
+	void Editnn(int id, string table){
+		uriHelper.NavigateTo("/"+table.ToLower()+"/article/"+id+"/"+Id);
+	}
+	void Deletenn(int id, string table){
+		uriHelper.NavigateTo("/" + table.ToLower() + "/article/delete/"+id+"/"+Id);
+	}
+	void nnEdit(int id, string table){
+		uriHelper.NavigateTo("/"+table.ToLower()+"/article/"+Id+"/"+id);
+	}
+	void nnDelete(int id, string table){
+		uriHelper.NavigateTo("/" + table.ToLower() + "/article/delete/"+Id+"/"+id);
+	}
+	void Createnn(string nnTable){
+		uriHelper.NavigateTo("/"+nnTable+"/article/"+Id+"/0");
+	}
+	void nnCreate(string nnTable){
+		uriHelper.NavigateTo("/"+nnTable+"/article/0/"+Id);
+	}
 }

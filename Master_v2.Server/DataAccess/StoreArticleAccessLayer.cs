@@ -42,12 +42,9 @@ namespace Master_v2.Server.DataAccess
 		}
 
 		public void Delete(int id1, int id2){
-			var entitys = _context.StoreArticle.Where(x=>x.StoreId == id1 && id2 == x.ArticleId);
-			if (entitys != null){
-                foreach (var entity in entitys)
-                {
-                    _context.StoreArticle.Remove(entity);
-                }
+			StoreArticle entity = _context.StoreArticle.Where(x=>x.StoreId == id1 && id2 == x.ArticleId).SingleOrDefault();
+			if (entity != null){
+				_context.StoreArticle.Remove(entity);
 				_context.SaveChanges();
 			}
 		}

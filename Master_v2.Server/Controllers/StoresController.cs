@@ -16,6 +16,7 @@ namespace Master_v2.Server.Controllers
 		[HttpGet]
 		[Route("api/stores")]
 		public IEnumerable<Store> Get(){
+
 			return _repository.GetAll();
 		}
 

@@ -1,6 +1,7 @@
 ﻿@page "/person/delete/{id}"
 @inject HttpClient Http
 @inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper
+<button onclick="@Back">Back</button>
 <h1>Delete Person</h1>
 
 Are you sure you want to delete this entity
@@ -8,6 +9,10 @@ Are you sure you want to delete this entity
 @functions{
 	[Parameter]
 	private string Id {get; set;}
+	void Back()
+	{
+		uriHelper.NavigateTo("/persons");
+	}
 	public async Task Yes(){
 		await Http.DeleteAsync("/api/person/delete/"+Id);
 		uriHelper.NavigateTo("/persons");

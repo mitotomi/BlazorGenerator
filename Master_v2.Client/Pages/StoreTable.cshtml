@@ -3,63 +3,55 @@
 @inject HttpClient Http
 @inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper
 
-@if (models == null)
-{
-    <p><em>Loading...</em></p>
+@if (models==null) { 
+	 <p><em>Loading...</em></p> 
 }
-else
-{
-    @if (AuthorizationStore.checkWritePermissions("store"))
-    {
-        <button onclick="@Create">Create</button>
-    }
-    <table class="table">
-        <thead>
-            <tr>
-                <td hidden> Id</td>
-                <td> Name</td>
-                <td> Address</td>
-                <td> OwnerId</td>
-                <td> Actions</td>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var entity in @models)
-            {
-                <tr>
-                    <td hidden> @entity.Id</td>
-                    <td><a href="/stores/@entity.Id"> @entity.Name</a></td>
-                    <td> @entity.Address</td>
-                    <td> @entity.OwnerId</td>
-                    @if (AuthorizationStore.checkWritePermissions("store"))
-                    {
-                        <td><button onclick="@(e => Edit(entity.Id))">Edit</button> |<button onclick="@(e => Delete(entity.Id))">Delete</button></td>
-                    }
-                </tr>
-            }
-        </tbody>
-    </table>
+ else {
+	@if(AuthorizationStore.checkWritePermissions("store")){
+		<button onclick="@Create">Create</button>
+	}
+<table class="table">
+	<thead>
+		<tr>
+			<td hidden> Id</td>
+			<td> Name</td>
+			<td> Address</td>
+			<td> OwnerId</td>
+		</tr>
+	</thead>
+	<tbody>
+	@foreach(var entity in @models){
+		<tr>
+			<td  hidden> @entity.Id</td>
+			<td ><a href="/stores/@entity.Id"> @entity.Name</a></td>
+			<td > @entity.Address</td>
+			<td > @entity.OwnerId</td>
+			@if(AuthorizationStore.checkWritePermissions("store"))
+			{
+				<td><button onclick="@(e=>Edit(entity.Id))">Edit</button> |<button onclick="@(e=>Delete(entity.Id))">Delete</button></td>
+			}
+		</tr>
+	}
+	</tbody>
+</table>
 }
 @functions{
 
 
-    List<Master_v2.Shared.Models.Store> models;
-    protected override async Task OnInitAsync()
-    {
-        if (!AuthorizationStore.checkReadPermission("store")) uriHelper.NavigateTo("/");
-        models = await Http.GetJsonAsync<List<Master_v2.Shared.Models.Store>>("/api/Stores");
-    }
-    void Create()
-    {
-        uriHelper.NavigateTo("/store/0");
-    }
-    void Edit(int id)
-    {
-        uriHelper.NavigateTo("/store/" + id);
-    }
-    void Delete(int id)
-    {
-        uriHelper.NavigateTo("/store/delete/" + id);
-    }
+	List<Master_v2.Shared.Models.Store> models;
+	protected override async Task OnInitAsync()
+	{ 
+		if (!AuthorizationStore.checkReadPermission("store")) uriHelper.NavigateTo(" / ");
+		models=await Http.GetJsonAsync<List<Master_v2.Shared.Models.Store>>("/api/stores");
+	}
+	void Create(){
+		uriHelper.NavigateTo("/store/0");
+	}
+	void Edit(int id){
+		uriHelper.NavigateTo("/store/"+id);
+	}
+	void Delete(int id){
+		uriHelper.NavigateTo("/store/delete/"+id);
+	}
 
 }

@@ -1,6 +1,7 @@
 ﻿@page "/person/{id}"
 @inject HttpClient Http
 @inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper
+<button onclick="@Back">Back</button>
 <h1>Edit Person</h1>
 
 <form onsubmit="@Post">
@@ -59,29 +60,33 @@
 </form>
 
 @functions{
-    [Parameter]
-    private string Id {get; set;}
+	[Parameter]
+	private string Id {get; set;}
 
-    Master_v2.Shared.Models.Person model = new Master_v2.Shared.Models.Person();
-    string message = "";
-    protected override async Task OnInitAsync(){
-        if (!AuthorizationStore.checkWritePermissions("person")) uriHelper.NavigateTo("/");
-        model = await Http.GetJsonAsync<Master_v2.Shared.Models.Person>("/api/person/"+Id);
-    }
-    public async Task Post(){
-        try{
-            if(model.Id==0){
-                await Http.SendJsonAsync(HttpMethod.Post, "/api/person/create",model);
-                uriHelper.NavigateTo("/persons");
-            }
-            else{
-                await Http.SendJsonAsync(HttpMethod.Post, "/api/person/edit",model);
-                uriHelper.NavigateTo("/persons");
-            }
-        }
-        catch(Exception e){
-            Console.WriteLine(e.Message);
-            throw;
-        }
-    }
+	Master_v2.Shared.Models.Person model = new Master_v2.Shared.Models.Person();
+	string message = "";
+	protected override async Task OnInitAsync(){
+		if (!AuthorizationStore.checkReadPermission("person")) uriHelper.NavigateTo(" / ");
+		model=await Http.GetJsonAsync<Master_v2.Shared.Models.Person>("/api/person/"+Id);
+	}
+	void Back()
+	{
+		uriHelper.NavigateTo("/persons");
+	}
+	public async Task Post(){
+		try{
+			if(model.Id==0){
+				await Http.SendJsonAsync(HttpMethod.Post, "/api/person/create",model);
+					uriHelper.NavigateTo("/persons");
+			}
+			else{
+				await Http.SendJsonAsync(HttpMethod.Post, "/api/person/edit",model);
+			uriHelper.NavigateTo("/persons");
+			}
+		}
+		catch(Exception e){
+			Console.WriteLine(e.Message);
+			throw;
+		}
+	}
 }

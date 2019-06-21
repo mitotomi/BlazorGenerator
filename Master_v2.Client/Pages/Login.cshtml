@@ -4,34 +4,32 @@
 @inject HttpClient Http
 @inject Microsoft.AspNetCore.Blazor.Services.IUriHelper uriHelper
 
-<h5> @message</h5>
+<h5> @message </h5>
 
-<div>
-    <label>UserName</label>
-    <input type="text" bind="@UserName" asp-for="username" />
-    <label>Password</label>
-    <input type="password" bind="@Password" asp-for="password" />
-    <button onclick="@LogIn"> Log in</button>
+<div> 
+	<label> UserName </label>
+	<input type="text" bind="@UserName" asp-for="username" />
+	<label> Password </label>
+	<input type="password" bind="@Password" asp-for="password" />
+	<button onclick="LogIn">Log in </button>
 </div>
 
 @functions{
-    public string UserName { get; set; }
-    public string Password { get; set; }
-    public string message = "";
-
-    public async Task LogIn()
-    {
-        var data = new Master_v2.Shared.Models.UserModel {password = Password, userName = UserName };
-        var response = await Http.PostJsonAsync<int>("/api/login", data);
-        if (response.ToString() == "0")
-        {
-            message = "User wasn't found, please check username and password!";
-        }
-        else
-        {
-            AuthorizationStore.setRoleId(response);
-            uriHelper.NavigateTo("/start");
-        }
-        Console.WriteLine(response);
-    }
+	public string UserName {get; set;}
+	public string Password{get; set;}
+	public string message = "";
+	public async Task LogIn()
+	{
+		var data = new Master_v2.Shared.Models.UserModel {password = Password, userName= UserName};
+		var response = await Http.PostJsonAsync<int>("/api/login", data);
+		if (response.ToString()=="0")
+		{
+			message="User wasn't found, please check username and password";
+		}
+		else
+		{
+			AuthorizationStore.setRoleId(response);
+			uriHelper.NavigateTo("/start");
+		}
+	}
 }
