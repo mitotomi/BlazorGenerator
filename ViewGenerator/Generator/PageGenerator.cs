@@ -65,11 +65,11 @@ namespace ViewGenerator.Generator
                             w.WriteLine("\n<h5>" + nnRelation.nnTable + "s</h5>\n");
                             if (nnDict[nnRelation.nnTable] == table.dbTable)
                             {
-                                w.WriteLine("<button onClick=@( () => Createnn(\"" + nnRelation.nnTable.ToLower() + "\"))>Create</button>");
+                                w.WriteLine("<button onclick=@( () => Createnn(\"" + nnRelation.nnTable.ToLower() + "\"))>Create</button>");
                             }
                             else
                             {
-                                w.WriteLine("<button onClick=@( () => nnCreate(\"" + nnRelation.nnTable.ToLower() + "\"))>Create</button>");
+                                w.WriteLine("<button onclick=@( () => nnCreate(\"" + nnRelation.nnTable.ToLower() + "\"))>Create</button>");
                             }
                             w.WriteLine("<table>\n\t<thead>\n\t\t<tr>");
                             foreach (var attr in nnRelation.atributes)
